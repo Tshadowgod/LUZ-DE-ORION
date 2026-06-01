@@ -12,31 +12,50 @@ export default function DeleteModal({ isOpen, productName, onConfirm, onCancel, 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🗑️</span>
-          </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">¿Eliminar producto?</h2>
-          <p className="text-gray-500 text-sm">
-            ¿Estás seguro de eliminar <strong className="text-gray-700">&ldquo;{productName}&rdquo;</strong>? Esta acción no se puede deshacer.
-          </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
+      <div
+        className="rounded-3xl p-8 max-w-sm w-full text-center"
+        style={{
+          background: 'rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(40px) saturate(200%)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: '0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.15)',
+        }}
+      >
+        <div
+          className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5"
+          style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', boxShadow: '0 0 24px rgba(239,68,68,0.25)' }}
+        >
+          <span className="text-3xl">🗑️</span>
         </div>
+
+        <h2 className="text-xl font-bold text-white mb-2">¿Eliminar producto?</h2>
+        <p className="text-white/50 text-sm mb-7 leading-relaxed">
+          ¿Estás segura de eliminar{' '}
+          <strong className="text-white/80">&ldquo;{productName}&rdquo;</strong>?{' '}
+          Esta acción no se puede deshacer.
+        </p>
+
         <div className="flex gap-3">
           <button
             onClick={onCancel}
             disabled={loading}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium glass-btn disabled:opacity-50"
           >
             Cancelar
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium disabled:opacity-50 transition-all"
+            style={{
+              background: 'rgba(239,68,68,0.25)',
+              border: '1px solid rgba(239,68,68,0.4)',
+              color: '#fca5a5',
+            }}
           >
-            {loading ? 'Eliminando...' : 'Sí, eliminar'}
+            {loading ? 'Eliminando…' : 'Sí, eliminar'}
           </button>
         </div>
       </div>

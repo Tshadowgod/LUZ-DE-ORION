@@ -27,78 +27,105 @@ type Props = {
   onDelete: (id: number) => void;
 };
 
+const catColors: Record<string, { bg: string; text: string; border: string }> = {
+  anillos:       { bg: 'rgba(236,72,153,0.15)',  text: '#f9a8d4', border: 'rgba(236,72,153,0.35)'  },
+  collares:      { bg: 'rgba(139,92,246,0.15)',  text: '#c4b5fd', border: 'rgba(139,92,246,0.35)'  },
+  aritos:        { bg: 'rgba(245,158,11,0.15)',  text: '#fde68a', border: 'rgba(245,158,11,0.35)'  },
+  joyeros:       { bg: 'rgba(59,130,246,0.15)',  text: '#93c5fd', border: 'rgba(59,130,246,0.35)'  },
+  llaveros:      { bg: 'rgba(16,185,129,0.15)',  text: '#6ee7b7', border: 'rgba(16,185,129,0.35)'  },
+  desinfectante: { bg: 'rgba(6,182,212,0.15)',   text: '#67e8f9', border: 'rgba(6,182,212,0.35)'   },
+};
+
 export default function ProductCard({ product, onDelete }: Props) {
   const [imgError, setImgError] = useState(false);
 
-  const stockColor =
+  const slug = product.category?.slug ?? '';
+  const cc = catColors[slug] ?? { bg: 'rgba(255,255,255,0.08)', text: '#e2e8f0', border: 'rgba(255,255,255,0.2)' };
+
+  const stockStyle =
     product.stock === 0
-      ? 'text-red-600 bg-red-50'
+      ? { bg: 'rgba(239,68,68,0.15)', text: '#fca5a5', border: 'rgba(239,68,68,0.3)' }
       : product.stock <= 3
-      ? 'text-amber-600 bg-amber-50'
-      : 'text-green-600 bg-green-50';
+      ? { bg: 'rgba(245,158,11,0.15)', text: '#fde68a', border: 'rgba(245,158,11,0.3)' }
+      : { bg: 'rgba(16,185,129,0.12)', text: '#6ee7b7', border: 'rgba(16,185,129,0.3)' };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
-      <div className="relative h-48 bg-gradient-to-br from-violet-50 to-amber-50">
+    <div className="glass-card rounded-3xl overflow-hidden group">
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden">
         {product.imageUrl && !imgError ? (
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgError(true)}
             unoptimized
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-300">
-            <span className="text-5xl">{product.category?.icon ?? '🛍️'}</span>
-            <span className="text-xs mt-2">Sin imagen</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center"
+            style={{ background: `radial-gradient(circle at 50% 60%, ${cc.bg.replace('0.15','0.25')}, transparent 70%)` }}>
+            <span className="text-6xl filter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+              {product.category?.icon ?? '🛍️'}
+            </span>
           </div>
         )}
-        <div className="absolute top-2 right-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${stockColor}`}>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        {/* Stock badge */}
+        <div className="absolute top-3 right-3">
+          <span
+            className="px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
+            style={{ background: stockStyle.bg, color: stockStyle.text, border: `1px solid ${stockStyle.border}` }}
+          >
             Stock: {product.stock}
           </span>
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 space-y-3">
+        {/* Category badge */}
         {product.category && (
-          <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mb-2 ${product.category.color ?? 'bg-gray-100 text-gray-700'}`}>
+          <span
+            className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
+            style={{ background: cc.bg, color: cc.text, border: `1px solid ${cc.border}` }}
+          >
             {product.category.icon} {product.category.name}
           </span>
         )}
 
-        <h3 className="font-semibold text-gray-800 text-base leading-tight mb-1 line-clamp-1">
+        <h3 className="font-semibold text-white/90 text-base leading-tight line-clamp-1">
           {product.name}
         </h3>
 
         {product.description && (
-          <p className="text-gray-500 text-xs line-clamp-2 mb-3">{product.description}</p>
+          <p className="text-white/45 text-xs line-clamp-2 leading-relaxed">{product.description}</p>
         )}
 
         {product.price && (
-          <p className="text-violet-700 font-bold text-lg mb-3">
+          <p className="text-gradient-amber font-bold text-lg">
             ${Number(product.price).toLocaleString('es-CL')}
           </p>
         )}
 
-        <div className="flex gap-2 mt-auto">
+        {/* Actions */}
+        <div className="flex gap-2 pt-1">
           <Link
             href={`/productos/${product.id}`}
-            className="flex-1 text-center text-xs font-medium px-3 py-2 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors"
+            className="flex-1 text-center text-xs font-medium px-3 py-2 rounded-xl glass-btn"
           >
-            Ver detalle
+            Ver
           </Link>
           <Link
             href={`/productos/${product.id}/editar`}
-            className="flex-1 text-center text-xs font-medium px-3 py-2 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+            className="flex-1 text-center text-xs font-medium px-3 py-2 rounded-xl glass-btn-amber"
           >
             Editar
           </Link>
           <button
             onClick={() => onDelete(product.id)}
-            className="px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors text-xs font-medium"
+            className="px-3 py-2 rounded-xl text-xs font-medium glass-btn-red"
           >
             ✕
           </button>

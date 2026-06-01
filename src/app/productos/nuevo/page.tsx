@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+
 import { db } from '@/lib/db';
 import { categories } from '@/lib/schema';
 import ProductForm from '@/components/ProductForm';
@@ -9,15 +10,20 @@ export default async function NuevoProductoPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-3 mb-8">
-        <Link href="/productos" className="text-gray-400 hover:text-gray-600 transition-colors">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 mb-8 text-sm">
+        <Link href="/productos" className="text-white/40 hover:text-white/70 transition-colors">
           ← Inventario
         </Link>
-        <span className="text-gray-300">/</span>
-        <h1 className="text-2xl font-bold text-violet-900">Agregar producto</h1>
+        <span className="text-white/20">/</span>
+        <h1 className="text-white/80 font-semibold">Agregar producto</h1>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+      <div className="glass-card rounded-3xl p-8">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-white">Nuevo producto</h2>
+          <p className="text-white/40 text-sm mt-1">Completa la información del artículo</p>
+        </div>
         <ProductForm categories={cats} mode="create" />
       </div>
     </div>

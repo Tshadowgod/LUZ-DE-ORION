@@ -7,7 +7,7 @@ import DeleteModal from '@/components/DeleteModal';
 type Props = { productId: number; productName: string };
 
 export default function DeleteButton({ productId, productName }: Props) {
-  const [open, setOpen] = useState(false);
+  const [open,    setOpen]    = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -20,19 +20,12 @@ export default function DeleteButton({ productId, productName }: Props) {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="px-4 py-3 rounded-xl border border-red-200 text-red-600 font-medium hover:bg-red-50 transition-colors text-sm"
-      >
+      <button onClick={() => setOpen(true)}
+        className="px-4 py-3 rounded-xl text-sm font-medium glass-btn-red">
         🗑️ Eliminar
       </button>
-      <DeleteModal
-        isOpen={open}
-        productName={productName}
-        onConfirm={handleDelete}
-        onCancel={() => setOpen(false)}
-        loading={loading}
-      />
+      <DeleteModal isOpen={open} productName={productName}
+        onConfirm={handleDelete} onCancel={() => setOpen(false)} loading={loading} />
     </>
   );
 }
