@@ -1,5 +1,4 @@
 export const dynamic = 'force-dynamic';
-
 import { db } from '@/lib/db';
 import { categories } from '@/lib/schema';
 import ProductForm from '@/components/ProductForm';
@@ -7,23 +6,16 @@ import Link from 'next/link';
 
 export default async function NuevoProductoPage() {
   const cats = await db.select().from(categories).orderBy(categories.name);
-
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-8 text-sm">
-        <Link href="/productos" className="text-white/40 hover:text-white/70 transition-colors">
-          ← Inventario
-        </Link>
-        <span className="text-white/20">/</span>
-        <h1 className="text-white/80 font-semibold">Agregar producto</h1>
+      <div className="flex items-center gap-2 mb-8 text-sm font-sans">
+        <Link href="/productos" className="text-on-surface-variant/60 hover:text-primary transition-colors">← Catálogo</Link>
+        <span className="text-outline-variant">/</span>
+        <span className="text-on-surface-variant font-medium">Nueva pieza</span>
       </div>
-
-      <div className="glass-card rounded-3xl p-8">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-white">Nuevo producto</h2>
-          <p className="text-white/40 text-sm mt-1">Completa la información del artículo</p>
-        </div>
+      <div className="liquid-glass glossy-reflection rounded-[2.5rem] p-8">
+        <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">NUEVA PIEZA</p>
+        <h2 className="font-display text-2xl font-semibold text-on-background mb-6">Agregar al catálogo</h2>
         <ProductForm categories={cats} mode="create" />
       </div>
     </div>

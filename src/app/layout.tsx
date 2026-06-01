@@ -1,28 +1,28 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
+import TopHeader from '@/components/TopHeader';
+import BottomNav from '@/components/BottomNav';
 
 export const metadata: Metadata = {
-  title: 'Luz de Orion — Inventario',
-  description: 'Sistema de inventario para joyería Luz de Orion',
+  title: 'LUZ DE ORIÓN | Joyería de Lujo',
+  description: 'Catálogo e inventario de joyería Luz de Orion',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+      </head>
       <body className="min-h-screen">
-        {/* Ambient orbs */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-          <div className="orb-1 absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] rounded-full bg-violet-700/25 blur-[130px]" />
-          <div className="orb-2 absolute bottom-[-15%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-900/35 blur-[110px]" />
-          <div className="orb-3 absolute top-[35%] right-[15%] w-[38vw] h-[38vw] rounded-full bg-pink-800/18 blur-[90px]" />
-          <div className="orb-4 absolute top-[5%] right-[30%] w-[28vw] h-[28vw] rounded-full bg-amber-700/15 blur-[70px]" />
-        </div>
-
-        <div className="relative z-10">
-          <Navbar />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
-        </div>
+        <TopHeader />
+        <main className="pt-20 pb-28 max-w-screen-xl mx-auto px-6">
+          {children}
+        </main>
+        <BottomNav />
       </body>
     </html>
   );
