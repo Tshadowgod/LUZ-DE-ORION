@@ -88,7 +88,7 @@ export default async function PublicHomePage() {
                 <div className="p-3">
                   <p className="text-[9px] font-bold tracking-wider text-tertiary font-sans uppercase mb-0.5">{p.categoryName}</p>
                   <p className="font-display text-sm font-medium text-on-background line-clamp-1">{p.name}</p>
-                  {p.price && <p className="text-primary font-bold text-sm font-sans mt-1">${Number(p.price).toLocaleString('es-CL')}</p>}
+                  {p.price && <p className="text-primary font-bold text-sm font-sans mt-1">Bs {Number(p.price).toLocaleString('es-BO')}</p>}
                 </div>
               </Link>
             ))}

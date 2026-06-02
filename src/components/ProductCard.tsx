@@ -62,7 +62,7 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
         )}
         {product.price && (
           <p className="text-primary font-bold text-xl font-sans mb-4">
-            ${Number(product.price).toLocaleString('es-CL')}
+            Bs {Number(product.price).toLocaleString('es-BO')}
           </p>
         )}
 

@@ -10,7 +10,7 @@ export default function CartSidebar() {
   const sendToWhatsApp = () => {
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '';
     const lines = items.map(i =>
-      `• ${i.quantity}x ${i.name}${i.price ? ` - $${(Number(i.price) * i.quantity).toLocaleString('es-CL')}` : ''}`
+      `• ${i.quantity}x ${i.name}${i.price ? ` - Bs ${(Number(i.price) * i.quantity).toLocaleString('es-BO')}` : ''}`
     ).join('\n');
 
     const parts = [
@@ -22,7 +22,7 @@ export default function CartSidebar() {
       '*Productos:*',
       lines,
       '',
-      `*Total: $${total.toLocaleString('es-CL')}*`,
+      `*Total: Bs ${total.toLocaleString('es-BO')}*`,
       '',
       '_Enviado desde la tienda web_ 💍',
     ];
@@ -75,7 +75,7 @@ export default function CartSidebar() {
                   <p className="font-display text-sm font-medium text-on-background line-clamp-1">{item.name}</p>
                   {item.price && (
                     <p className="text-primary text-sm font-bold font-sans">
-                      ${(Number(item.price) * item.quantity).toLocaleString('es-CL')}
+                      Bs {(Number(item.price) * item.quantity).toLocaleString('es-BO')}
                     </p>
                   )}
                 </div>
@@ -111,7 +111,7 @@ export default function CartSidebar() {
             </div>
             <div className="flex items-center justify-between py-1">
               <p className="text-on-surface-variant text-sm font-sans">Total</p>
-              <p className="font-display text-2xl font-semibold text-primary">${total.toLocaleString('es-CL')}</p>
+              <p className="font-display text-2xl font-semibold text-primary">Bs {total.toLocaleString('es-BO')}</p>
             </div>
             <button onClick={sendToWhatsApp}
               className="w-full py-3.5 rounded-2xl text-white font-semibold font-sans text-sm flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all"

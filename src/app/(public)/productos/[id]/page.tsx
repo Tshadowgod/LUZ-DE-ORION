@@ -66,12 +66,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           {product.price && (
             <p className="font-display text-3xl font-semibold text-primary">
-              ${Number(product.price).toLocaleString('es-CL')}
+              Bs {Number(product.price).toLocaleString('es-BO')}
             </p>
           )}
 
           <p className="text-xs text-on-surface-variant/50 font-sans pt-2 border-t border-outline-variant/30">
-            Agregado el {new Date(product.createdAt).toLocaleDateString('es-CL', { dateStyle: 'long' })}
+            Agregado el {new Date(product.createdAt).toLocaleDateString('es-BO', { dateStyle: 'long' })}
           </p>
 
           <div className="flex gap-3 pt-1">

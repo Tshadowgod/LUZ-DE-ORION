@@ -56,7 +56,7 @@ export default async function AdminNoticiasPage() {
                     <p className="text-xs text-on-surface-variant font-sans mt-1 line-clamp-2">{item.description}</p>
                   )}
                   <p className="text-[10px] text-on-surface-variant/50 font-sans mt-1">
-                    {new Date(item.createdAt).toLocaleDateString('es-CL', { dateStyle: 'medium' })}
+                    {new Date(item.createdAt).toLocaleDateString('es-BO', { dateStyle: 'medium' })}
                   </p>
                 </div>
               </div>
