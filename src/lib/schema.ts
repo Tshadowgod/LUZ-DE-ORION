@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, numeric, integer, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, text, numeric, integer, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const categories = pgTable('categories', {
@@ -21,6 +21,15 @@ export const products = pgTable('products', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export const announcements = pgTable('announcements', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  imageUrl: text('image_url'),
+  isActive: boolean('is_active').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
 }));
@@ -36,5 +45,7 @@ export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
 export type Product = typeof products.$inferSelect;
 export type NewProduct = typeof products.$inferInsert;
+export type Announcement = typeof announcements.$inferSelect;
+export type NewAnnouncement = typeof announcements.$inferInsert;
 
 export type ProductWithCategory = Product & { category: Category };

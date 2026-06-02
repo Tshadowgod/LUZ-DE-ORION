@@ -5,16 +5,18 @@ import { products, categories } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import Image from 'next/image';
 import Link from 'next/link';
-import DeleteButton from './DeleteButton';
+import AddToCartButton from './AddToCartButton';
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const [product] = await db
-    .select({ id: products.id, name: products.name, description: products.description,
-               price: products.price, stock: products.stock, imageUrl: products.imageUrl,
-               createdAt: products.createdAt,
-               category: { id: categories.id, name: categories.name, slug: categories.slug,
-                            icon: categories.icon, color: categories.color } })
+    .select({
+      id: products.id, name: products.name, description: products.description,
+      price: products.price, stock: products.stock, imageUrl: products.imageUrl,
+      createdAt: products.createdAt,
+      category: { id: categories.id, name: categories.name, slug: categories.slug,
+                   icon: categories.icon, color: categories.color },
+    })
     .from(products).leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.id, Number(id)));
 
@@ -73,11 +75,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </p>
 
           <div className="flex gap-3 pt-1">
-            <Link href={`/productos/${product.id}/editar`}
-              className="flex-1 text-center px-4 py-3 rounded-2xl text-sm font-semibold font-sans bg-primary text-white hover:bg-primary/90 transition-colors">
-              ✏️ Editar
-            </Link>
-            <DeleteButton productId={product.id} productName={product.name} />
+            <AddToCartButton product={{
+              id: product.id, name: product.name, price: product.price,
+              imageUrl: product.imageUrl, categoryIcon: product.category?.icon ?? null,
+              stock: product.stock,
+            }} />
           </div>
         </div>
       </div>

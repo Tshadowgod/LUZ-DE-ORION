@@ -6,9 +6,9 @@ import { useRouter } from 'next/navigation';
 
 type Category = { id: number; name: string; slug: string; icon: string | null; color: string | null };
 type FormData = { name: string; description: string; price: string; stock: string; categoryId: string; imageUrl: string };
-type Props = { categories: Category[]; initialData?: Partial<FormData>; productId?: number; mode: 'create' | 'edit' };
+type Props = { categories: Category[]; initialData?: Partial<FormData>; productId?: number; mode: 'create' | 'edit'; redirectTo?: string };
 
-export default function ProductForm({ categories, initialData, productId, mode }: Props) {
+export default function ProductForm({ categories, initialData, productId, mode, redirectTo = '/admin/catalogo' }: Props) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<FormData>({
@@ -53,7 +53,7 @@ export default function ProductForm({ categories, initialData, productId, mode }
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Error al guardar');
-      router.push('/productos'); router.refresh();
+      router.push(redirectTo); router.refresh();
     } catch (err) { setError(err instanceof Error ? err.message : 'Error'); }
     finally { setSaving(false); }
   };

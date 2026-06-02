@@ -1,5 +1,4 @@
 'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -7,24 +6,36 @@ import { useState } from 'react';
 type Category = { id: number; name: string; slug: string; icon: string | null; color: string | null };
 type Product  = { id: number; name: string; description: string | null; price: string | null;
                   stock: number; imageUrl: string | null; category: Category | null };
-type Props = { product: Product; onDelete: (id: number) => void };
+type Props = {
+  product: Product;
+  mode?: 'public' | 'admin';
+  onDelete?: (id: number) => void;
+  onAddToCart?: (product: Product) => void;
+};
 
-export default function ProductCard({ product, onDelete }: Props) {
+export default function ProductCard({ product, mode = 'public', onDelete, onAddToCart }: Props) {
   const [imgError, setImgError] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const stockLabel = product.stock === 0 ? 'Agotado' : product.stock <= 3 ? `Solo ${product.stock}` : `${product.stock} uds.`;
   const stockColor = product.stock === 0 ? 'text-red-500' : product.stock <= 3 ? 'text-tertiary' : 'text-primary';
 
+  const handleAddToCart = () => {
+    if (product.stock === 0 || !onAddToCart) return;
+    onAddToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1600);
+  };
+
   return (
     <div className="flex-shrink-0 w-full liquid-glass rounded-[2rem] overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:shadow-lg">
-      {/* Image */}
       <div className="h-64 overflow-hidden relative">
         {product.imageUrl && !imgError ? (
           <Image src={product.imageUrl} alt={product.name} fill
             className="object-cover group-hover:scale-105 transition-transform duration-1000"
             onError={() => setImgError(true)} unoptimized />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-primary-container/30">
+          <div className="absolute inset-0 flex items-center justify-center bg-primary-container/30">
             <span className="text-6xl opacity-60">{product.category?.icon ?? '💍'}</span>
           </div>
         )}
@@ -35,7 +46,6 @@ export default function ProductCard({ product, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Info */}
       <div className="p-5">
         {product.category && (
           <p className="text-[10px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">
@@ -57,18 +67,37 @@ export default function ProductCard({ product, onDelete }: Props) {
         )}
 
         <div className="flex gap-2">
-          <Link href={`/productos/${product.id}`}
-            className="flex-1 text-center text-xs font-semibold font-sans py-2 rounded-xl liquid-glass-dark text-primary hover:bg-primary-container/40 transition-colors">
-            Ver detalle
-          </Link>
-          <Link href={`/productos/${product.id}/editar`}
-            className="flex-1 text-center text-xs font-semibold font-sans py-2 rounded-xl bg-tertiary-container/50 text-on-tertiary-container hover:bg-tertiary-container/70 transition-colors">
-            Editar
-          </Link>
-          <button onClick={() => onDelete(product.id)}
-            className="px-3 py-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-100 transition-colors text-xs">
-            ✕
-          </button>
+          {mode === 'public' ? (
+            <>
+              <Link href={`/productos/${product.id}`}
+                className="flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl liquid-glass-dark text-primary hover:bg-primary-container/40 transition-colors">
+                Ver detalle
+              </Link>
+              <button onClick={handleAddToCart} disabled={product.stock === 0}
+                className={`flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl transition-all ${
+                  product.stock === 0
+                    ? 'bg-surface-container text-on-surface-variant/40 cursor-not-allowed'
+                    : added
+                    ? 'bg-primary/15 text-primary border border-primary/30'
+                    : 'bg-primary text-white hover:bg-primary/90'
+                }`}>
+                {product.stock === 0 ? 'Agotado' : added ? '✓ Agregado' : '+ Al carrito'}
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href={`/admin/catalogo/${product.id}/editar`}
+                className="flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl bg-tertiary-container/50 text-on-tertiary-container hover:bg-tertiary-container/70 transition-colors">
+                ✏️ Editar
+              </Link>
+              {onDelete && (
+                <button onClick={() => onDelete(product.id)}
+                  className="px-3 py-2.5 rounded-xl bg-red-50 text-red-400 hover:bg-red-100 transition-colors text-xs">
+                  ✕
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
