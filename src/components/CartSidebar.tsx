@@ -10,21 +10,27 @@ export default function CartSidebar() {
   const sendToWhatsApp = () => {
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '';
     const lines = items.map(i =>
-      `• ${i.quantity}x ${i.name}${i.price ? ` - Bs ${(Number(i.price) * i.quantity).toLocaleString('es-BO')}` : ''}`
+      `   💎 ${i.quantity}x ${i.name}${i.price ? `  →  Bs ${(Number(i.price) * i.quantity).toLocaleString('es-BO')}` : ''}`
     ).join('\n');
 
     const parts = [
-      '🛒 *Pedido - Luz de Orión* ✨',
-      '',
-      ...(customerName ? [`*Cliente:* ${customerName}`] : []),
-      ...(customerPhone ? [`*Teléfono:* ${customerPhone}`] : []),
-      '',
-      '*Productos:*',
+      '✨🌟 *LUZ DE ORIÓN* 🌟✨',
+      '💍 _Joyería Artesanal de Lujo_',
+      '━━━━━━━━━━━━━━━━━━━',
+      '🛍️ *NUEVO PEDIDO*',
+      '━━━━━━━━━━━━━━━━━━━',
+      ...(customerName  ? [`👤 *Cliente:*  ${customerName}`]  : []),
+      ...(customerPhone ? [`📱 *Teléfono:* ${customerPhone}`] : []),
+      ...(customerName || customerPhone ? [''] : []),
+      '🛒 *Productos:*',
       lines,
       '',
-      `*Total: Bs ${total.toLocaleString('es-BO')}*`,
+      '━━━━━━━━━━━━━━━━━━━',
+      `💰 *TOTAL:  Bs ${total.toLocaleString('es-BO')}*`,
+      '━━━━━━━━━━━━━━━━━━━',
       '',
-      '_Enviado desde la tienda web_ 💍',
+      '💕 _¡Gracias por tu pedido!_',
+      '⭐ _Te contactaremos pronto_ ✨',
     ];
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(parts.join('\n'))}`;
