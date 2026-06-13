@@ -47,6 +47,7 @@ body {
   font-family: 'Montserrat', system-ui, sans-serif;
   color: #1b1c1a;
   overflow-x: hidden;
+  overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
 }
 

@@ -41,7 +41,8 @@ export default function AdminNav() {
         </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 liquid-glass z-50 rounded-t-[2.5rem] border-t border-white/30">
+      <nav className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 liquid-glass z-50 rounded-t-[2.5rem] border-t border-white/30"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {tabs.map(tab => {
           const active = tab.href === '/admin' ? pathname === '/admin' : pathname.startsWith(tab.href);
           return (
