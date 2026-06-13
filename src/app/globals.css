@@ -53,6 +53,24 @@ body {
 
 ::selection { background: rgba(244,215,211,0.8); color: #6f5956; }
 
+/* ── App shell ──────────────────────────────────────────
+   Armazón de altura fija: barras arriba/abajo estáticas,
+   solo el contenido central hace scroll. dvh se adapta a
+   la barra de direcciones del navegador móvil.           */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Evitar que iOS haga zoom automático al enfocar inputs
+   (lo hace cuando la letra es menor a 16px) */
+@media (max-width: 640px) {
+  input, select, textarea { font-size: 16px !important; }
+}
+
 /* ── Liquid Glass ───────────────────────────────────────
    Capas: gradiente de relleno + blur saturado + borde
    luminoso superior (inset) + sombra ambiental suave.   */

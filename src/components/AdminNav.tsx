@@ -8,7 +8,7 @@ const tabs = [
   { href: '/admin/noticias',  icon: 'campaign',    label: 'Noticias' },
 ];
 
-export default function AdminNav() {
+export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -18,9 +18,8 @@ export default function AdminNav() {
     router.refresh();
   };
 
-  return (
-    <>
-      <header className="fixed top-0 w-full z-50 liquid-glass border-b border-white/20">
+  if (slot === 'top') return (
+      <header className="flex-none w-full z-40 liquid-glass border-b border-white/20">
         <div className="flex justify-between items-center px-6 h-16 w-full max-w-screen-xl mx-auto">
           <Link href="/"
             className="active:scale-95 transition-transform text-on-surface-variant/60 hover:text-primary liquid-glass-dark p-2 rounded-full">
@@ -40,8 +39,10 @@ export default function AdminNav() {
           </button>
         </div>
       </header>
+  );
 
-      <nav className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-6 liquid-glass z-50 rounded-t-[2.5rem] border-t border-white/30"
+  return (
+      <nav className="flex-none w-full h-20 flex justify-around items-center px-6 liquid-glass z-40 rounded-t-[2.5rem] border-t border-white/30"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {tabs.map(tab => {
           const active = tab.href === '/admin' ? pathname === '/admin' : pathname.startsWith(tab.href);
@@ -66,6 +67,5 @@ export default function AdminNav() {
           <span className="text-[9px] mt-0.5 font-semibold tracking-wider uppercase font-sans">Salir</span>
         </button>
       </nav>
-    </>
   );
 }

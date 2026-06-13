@@ -7,16 +7,17 @@ import CartButton from '@/components/CartButton';
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
-      <TopHeader />
-      {/* El scroll vive en este contenedor (no en el body) para que
-          las barras fijas no salten cuando el navegador móvil
-          oculta/muestra su barra de direcciones */}
-      <div className="fixed inset-0 overflow-y-auto overscroll-contain">
-        <main className="pt-20 pb-28 max-w-screen-xl mx-auto px-6">
-          {children}
-        </main>
+      {/* App shell: las barras son parte del armazón (no flotantes),
+          solo el contenido central hace scroll */}
+      <div className="app-shell">
+        <TopHeader />
+        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+          <main className="py-6 pb-10 max-w-screen-xl mx-auto px-6 w-full">
+            {children}
+          </main>
+        </div>
+        <BottomNav />
       </div>
-      <BottomNav />
       <CartSidebar />
       <CartButton />
     </CartProvider>

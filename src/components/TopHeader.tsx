@@ -6,7 +6,7 @@ export default function TopHeader() {
   const { count, setIsOpen } = useCart();
 
   return (
-    <header className="fixed top-0 w-full z-50 liquid-glass border-b border-white/20">
+    <header className="flex-none w-full z-40 liquid-glass border-b border-white/20">
       <div className="flex justify-between items-center px-6 h-16 w-full max-w-screen-xl mx-auto">
         <Link href="/productos"
           className="active:scale-95 transition-transform text-primary liquid-glass-dark p-2 rounded-full">
