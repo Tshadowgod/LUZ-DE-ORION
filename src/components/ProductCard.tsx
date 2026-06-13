@@ -28,11 +28,11 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
   };
 
   return (
-    <div className="flex-shrink-0 w-full liquid-glass rounded-[2rem] overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:shadow-lg">
+    <div className="flex-shrink-0 w-full liquid-glass glass-card glossy-reflection rounded-[2rem] overflow-hidden group">
       <div className="h-64 overflow-hidden relative">
         {product.imageUrl && !imgError ? (
           <Image src={product.imageUrl} alt={product.name} fill
-            className="object-cover group-hover:scale-105 transition-transform duration-1000"
+            className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
             onError={() => setImgError(true)} unoptimized />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-primary-container/30">
@@ -74,12 +74,12 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
                 Ver detalle
               </Link>
               <button onClick={handleAddToCart} disabled={product.stock === 0}
-                className={`flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl transition-all ${
+                className={`flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl transition-all duration-300 ${
                   product.stock === 0
                     ? 'bg-surface-container text-on-surface-variant/40 cursor-not-allowed'
                     : added
-                    ? 'bg-primary/15 text-primary border border-primary/30'
-                    : 'bg-primary text-white hover:bg-primary/90'
+                    ? 'bg-primary/15 text-primary border border-primary/30 animate-pop-in'
+                    : 'bg-primary text-white hover:bg-primary/90 hover:shadow-md active:scale-95'
                 }`}>
                 {product.stock === 0 ? 'Agotado' : added ? '✓ Agregado' : '+ Al carrito'}
               </button>

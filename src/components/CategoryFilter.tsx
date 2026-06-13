@@ -20,19 +20,19 @@ export default function CategoryFilter({ categories, selected }: Props) {
   return (
     <div className="flex gap-2 overflow-x-auto scroll-hide pb-1">
       <button onClick={() => handleFilter(null)}
-        className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold font-sans tracking-wide transition-all duration-200 ${
+        className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold font-sans tracking-wide transition-all duration-300 active:scale-95 ${
           !selected
-            ? 'bg-primary text-white shadow-sm'
-            : 'liquid-glass-dark text-on-surface-variant hover:text-primary'
+            ? 'bg-primary text-white shadow-md scale-105'
+            : 'liquid-glass-dark text-on-surface-variant hover:text-primary hover:-translate-y-0.5'
         }`}>
         Todas
       </button>
       {categories.map((cat) => (
         <button key={cat.id} onClick={() => handleFilter(cat.slug)}
-          className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold font-sans tracking-wide transition-all duration-200 flex items-center gap-1.5 ${
+          className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-semibold font-sans tracking-wide transition-all duration-300 active:scale-95 flex items-center gap-1.5 ${
             selected === cat.slug
-              ? 'bg-primary text-white shadow-sm'
-              : 'liquid-glass-dark text-on-surface-variant hover:text-primary'
+              ? 'bg-primary text-white shadow-md scale-105'
+              : 'liquid-glass-dark text-on-surface-variant hover:text-primary hover:-translate-y-0.5'
           }`}>
           {cat.icon} {cat.name}
         </button>

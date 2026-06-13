@@ -32,13 +32,15 @@ export default function Carousel({ items }: { items: Announcement[] }) {
   const item = items[current];
 
   return (
-    <div className="relative rounded-[2.5rem] overflow-hidden h-56 select-none">
+    <div className="relative rounded-[2.5rem] overflow-hidden h-56 select-none"
+      style={{ boxShadow: '0 12px 40px rgba(111,89,86,0.15), inset 0 1px 0 rgba(255,255,255,0.3)' }}>
       {/* Slides */}
       {items.map((slide, i) => (
         <div key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0'}`}>
+          className={`absolute inset-0 transition-opacity duration-1000 ease-out ${i === current ? 'opacity-100' : 'opacity-0'}`}>
           {slide.imageUrl ? (
-            <img src={slide.imageUrl} alt={slide.title} className="w-full h-full object-cover" />
+            <img src={slide.imageUrl} alt={slide.title}
+              className={`w-full h-full object-cover ${i === current ? 'animate-ken-burns' : ''}`} />
           ) : (
             <div className="w-full h-full"
               style={{ background: 'linear-gradient(135deg, rgba(244,215,211,0.5) 0%, rgba(255,224,136,0.4) 100%)' }} />
@@ -49,11 +51,11 @@ export default function Carousel({ items }: { items: Announcement[] }) {
 
       {/* Text overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-        <p className="font-display text-white text-xl font-semibold leading-tight drop-shadow-sm">
+        <p key={`t-${item.id}`} className="font-display text-white text-xl font-semibold leading-tight drop-shadow-sm animate-fade-up">
           {item.title}
         </p>
         {item.description && (
-          <p className="text-white/80 text-sm font-sans mt-1 line-clamp-2 drop-shadow-sm">
+          <p key={`d-${item.id}`} className="text-white/80 text-sm font-sans mt-1 line-clamp-2 drop-shadow-sm animate-fade-up stagger-1">
             {item.description}
           </p>
         )}

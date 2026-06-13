@@ -27,13 +27,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-2 mb-8 text-sm font-sans">
-        <Link href="/productos" className="text-on-surface-variant/60 hover:text-primary transition-colors">← Catálogo</Link>
+      <div className="flex items-center gap-2 mb-8 text-sm font-sans animate-fade-in">
+        <Link href="/productos" className="text-on-surface-variant/60 hover:text-primary hover:-translate-x-0.5 transition-all inline-block">← Catálogo</Link>
         <span className="text-outline-variant">/</span>
         <span className="text-on-surface-variant font-medium truncate">{product.name}</span>
       </div>
 
-      <div className="liquid-glass glossy-reflection rounded-[2.5rem] overflow-hidden">
+      <div className="liquid-glass glossy-reflection rounded-[2.5rem] overflow-hidden animate-scale-in">
         <div className="relative h-80 overflow-hidden">
           {product.imageUrl ? (
             <Image src={product.imageUrl} alt={product.name} fill className="object-cover" unoptimized />

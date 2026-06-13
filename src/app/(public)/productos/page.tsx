@@ -55,12 +55,12 @@ function CatalogoContent() {
 
   return (
     <div className="space-y-6">
-      <section>
+      <section className="animate-fade-up">
         <p className="text-[11px] font-bold tracking-[0.2em] text-primary font-sans uppercase mb-1 opacity-80">LUZ DE ORIÓN</p>
         <h2 className="font-display text-3xl font-semibold text-on-background">Catálogo</h2>
       </section>
 
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form onSubmit={handleSearch} className="flex gap-2 animate-fade-up stagger-1">
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Buscar pieza…"
           className="liquid-glass-input flex-1 px-4 py-2.5 rounded-full text-sm font-sans" />
@@ -76,26 +76,30 @@ function CatalogoContent() {
         )}
       </form>
 
-      <CategoryFilter categories={categories} selected={selectedCategory} />
+      <div className="animate-fade-up stagger-2">
+        <CategoryFilter categories={categories} selected={selectedCategory} />
+      </div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass rounded-[2rem] h-96 animate-pulse" />)}
+          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-20">
-          <span className="text-6xl block mb-4">🔍</span>
+        <div className="text-center py-20 animate-scale-in">
+          <span className="text-6xl block mb-4 animate-float">🔍</span>
           <p className="font-display text-xl font-medium text-on-background">No se encontraron piezas</p>
           <p className="text-on-surface-variant text-sm font-sans mt-1">Intenta con otra categoría</p>
         </div>
       ) : (
         <>
-          <p className="text-xs text-on-surface-variant/60 font-sans">
+          <p className="text-xs text-on-surface-variant/60 font-sans animate-fade-in">
             {products.length} pieza{products.length !== 1 ? 's' : ''} encontrada{products.length !== 1 ? 's' : ''}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {products.map(p => (
-              <ProductCard key={p.id} product={p} mode="public" onAddToCart={handleAddToCart} />
+            {products.map((p, i) => (
+              <div key={p.id} className={`animate-fade-up stagger-${Math.min((i % 6) + 1, 6)}`}>
+                <ProductCard product={p} mode="public" onAddToCart={handleAddToCart} />
+              </div>
             ))}
           </div>
         </>
@@ -108,7 +112,7 @@ export default function CatalogoPage() {
   return (
     <Suspense fallback={
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
-        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass rounded-[2rem] h-96 animate-pulse" />)}
+        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
       </div>
     }>
       <CatalogoContent />

@@ -29,7 +29,7 @@ export default function TopHeader() {
             shopping_bag
           </span>
           {count > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-tertiary text-white text-[9px] font-bold flex items-center justify-center leading-none">
+            <span key={count} className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-tertiary text-white text-[9px] font-bold flex items-center justify-center leading-none animate-badge-pop">
               {count > 9 ? '9+' : count}
             </span>
           )}
