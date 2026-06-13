@@ -56,19 +56,19 @@ function AdminCatalogoContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex items-end justify-between gap-4 animate-fade-up">
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">ADMIN</p>
           <h2 className="font-display text-3xl font-semibold text-on-background">Catálogo</h2>
         </div>
         <Link href="/admin/catalogo/nuevo"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 transition-colors">
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-300">
           <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'wght' 200, 'opsz' 20" }}>add</span>
           Nueva pieza
         </Link>
       </div>
 
-      <form onSubmit={handleSearch} className="flex gap-2">
+      <form onSubmit={handleSearch} className="flex gap-2 animate-fade-up stagger-1">
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Buscar pieza…"
           className="liquid-glass-input flex-1 px-4 py-2.5 rounded-full text-sm font-sans" />
@@ -84,27 +84,31 @@ function AdminCatalogoContent() {
         )}
       </form>
 
-      <CategoryFilter categories={categories} selected={selectedCategory} />
+      <div className="animate-fade-up stagger-2">
+        <CategoryFilter categories={categories} selected={selectedCategory} />
+      </div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass rounded-[2rem] h-96 animate-pulse" />)}
+          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-20">
-          <span className="text-6xl block mb-4">📦</span>
+        <div className="text-center py-20 animate-scale-in">
+          <span className="text-6xl block mb-4 animate-float">📦</span>
           <p className="font-display text-xl font-medium text-on-background">No hay productos</p>
           <Link href="/admin/catalogo/nuevo"
-            className="inline-block mt-5 px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 transition-colors">
+            className="inline-block mt-5 px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
             Agregar primera pieza
           </Link>
         </div>
       ) : (
         <>
-          <p className="text-xs text-on-surface-variant/60 font-sans">{products.length} pieza{products.length !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-on-surface-variant/60 font-sans animate-fade-in">{products.length} pieza{products.length !== 1 ? 's' : ''}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {products.map(p => (
-              <ProductCard key={p.id} product={p} mode="admin" onDelete={() => setDeleteTarget(p)} />
+            {products.map((p, i) => (
+              <div key={p.id} className={`animate-fade-up stagger-${Math.min((i % 6) + 1, 6)}`}>
+                <ProductCard product={p} mode="admin" onDelete={() => setDeleteTarget(p)} />
+              </div>
             ))}
           </div>
         </>
@@ -120,7 +124,7 @@ export default function AdminCatalogoPage() {
   return (
     <Suspense fallback={
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
-        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass rounded-[2rem] h-96 animate-pulse" />)}
+        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
       </div>
     }>
       <AdminCatalogoContent />

@@ -33,7 +33,7 @@ export default function AdminNav() {
             <p className="text-[9px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase -mt-0.5">PANEL ADMIN</p>
           </div>
           <button onClick={handleLogout}
-            className="active:scale-95 transition-transform text-on-surface-variant/60 hover:text-red-400 liquid-glass-dark p-2 rounded-full">
+            className="active:scale-95 hover:scale-110 transition-all duration-300 text-on-surface-variant/60 hover:text-red-400 liquid-glass-dark p-2 rounded-full">
             <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
               logout
             </span>

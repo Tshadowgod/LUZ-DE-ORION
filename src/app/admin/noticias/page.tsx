@@ -10,32 +10,32 @@ export default async function AdminNoticiasPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex items-end justify-between gap-4 animate-fade-up">
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">ADMIN</p>
           <h2 className="font-display text-3xl font-semibold text-on-background">Noticias</h2>
         </div>
         <Link href="/admin/noticias/nueva"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 transition-colors">
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-300">
           <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'wght' 200, 'opsz' 20" }}>add</span>
           Nueva
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-20">
-          <span className="text-6xl block mb-4">📢</span>
+        <div className="text-center py-20 animate-scale-in">
+          <span className="text-6xl block mb-4 animate-float">📢</span>
           <p className="font-display text-xl font-medium text-on-background">Sin noticias aún</p>
           <p className="text-on-surface-variant text-sm font-sans mt-1 mb-6">Crea tu primera promoción o anuncio</p>
           <Link href="/admin/noticias/nueva"
-            className="inline-block px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 transition-colors">
+            className="inline-block px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
             Crear primera noticia
           </Link>
         </div>
       ) : (
         <div className="space-y-3">
-          {items.map(item => (
-            <div key={item.id} className="liquid-glass rounded-[2rem] overflow-hidden">
+          {items.map((item, i) => (
+            <div key={item.id} className={`liquid-glass glass-card rounded-[2rem] overflow-hidden animate-fade-up stagger-${Math.min(i + 1, 6)}`}>
               <div className="flex gap-4 p-4 items-start">
                 <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                   {item.imageUrl

@@ -27,14 +27,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="font-display text-3xl font-semibold text-primary">
+        <div className="text-center mb-8 animate-fade-up">
+          <Link href="/" className="font-display text-3xl font-semibold text-primary inline-block hover:scale-105 transition-transform duration-300">
             ✦ Luz de Orion
           </Link>
           <p className="text-on-surface-variant text-sm font-sans mt-1">Panel Administrador</p>
         </div>
 
-        <div className="liquid-glass glossy-reflection rounded-[2.5rem] p-8">
+        <div className="liquid-glass glossy-reflection rounded-[2.5rem] p-8 animate-scale-in stagger-1"
+          style={{ boxShadow: '0 24px 64px rgba(111,89,86,0.12)' }}>
           <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">ACCESO</p>
           <h2 className="font-display text-2xl font-semibold text-on-background mb-6">Iniciar sesión</h2>
 
@@ -47,15 +48,15 @@ export default function LoginPage() {
                 placeholder="••••••••" required autoFocus
                 className="liquid-glass-input w-full px-4 py-3 rounded-2xl text-sm font-sans" />
             </div>
-            {error && <p className="text-red-400 text-sm font-sans text-center">{error}</p>}
+            {error && <p className="text-red-400 text-sm font-sans text-center animate-scale-in">{error}</p>}
             <button type="submit" disabled={loading}
-              className="w-full py-3 rounded-2xl bg-primary text-white font-semibold font-sans text-sm hover:bg-primary/90 transition-colors disabled:opacity-60 active:scale-[0.98]">
+              className="glossy-reflection w-full py-3 rounded-2xl bg-primary text-white font-semibold font-sans text-sm hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300 disabled:opacity-60">
               {loading ? 'Ingresando...' : 'Ingresar al panel'}
             </button>
           </form>
         </div>
 
-        <p className="text-center mt-6 text-xs text-on-surface-variant/50 font-sans">
+        <p className="text-center mt-6 text-xs text-on-surface-variant/50 font-sans animate-fade-in stagger-3">
           <Link href="/" className="hover:text-primary transition-colors">← Volver a la tienda</Link>
         </p>
       </div>

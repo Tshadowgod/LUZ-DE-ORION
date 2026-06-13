@@ -19,15 +19,16 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section>
+      <section className="animate-fade-up">
         <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">PANEL ADMIN</p>
         <h2 className="font-display text-3xl font-semibold text-on-background">Resumen</h2>
       </section>
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3">
-        {stats.map(s => (
-          <div key={s.label} className="liquid-glass glossy-reflection rounded-[2rem] p-5 text-center">
+        {stats.map((s, i) => (
+          <div key={s.label}
+            className={`liquid-glass glass-card glossy-reflection rounded-[2rem] p-5 text-center animate-fade-up stagger-${i + 1}`}>
             <span className="material-symbols-outlined text-2xl text-primary mb-2 block"
               style={{ fontVariationSettings: "'FILL' 1, 'wght' 200, 'opsz' 24" }}>
               {s.icon}
@@ -39,7 +40,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Quick actions */}
-      <section>
+      <section className="animate-fade-up stagger-3">
         <h3 className="font-display text-xl font-semibold text-on-background mb-4">Acciones rápidas</h3>
         <div className="space-y-3">
           {[
@@ -47,10 +48,10 @@ export default async function AdminDashboardPage() {
             { href: '/admin/catalogo',       icon: 'inventory_2', label: 'Gestionar catálogo',         desc: 'Editar o eliminar productos' },
             { href: '/admin/noticias/nueva', icon: 'campaign',    label: 'Nueva noticia/promoción',    desc: 'Publicar en el carrusel' },
             { href: '/admin/noticias',       icon: 'newspaper',   label: 'Gestionar noticias',          desc: 'Activar, editar o eliminar noticias' },
-          ].map(action => (
+          ].map((action, i) => (
             <Link key={action.href} href={action.href}
-              className="flex items-center gap-4 liquid-glass rounded-[1.5rem] p-4 hover:-translate-y-0.5 transition-all duration-200 hover:shadow-md">
-              <div className="w-12 h-12 rounded-2xl bg-primary-container/30 flex items-center justify-center flex-shrink-0">
+              className={`group flex items-center gap-4 liquid-glass glass-card glossy-reflection rounded-[1.5rem] p-4 animate-fade-up stagger-${Math.min(i + 3, 6)}`}>
+              <div className="w-12 h-12 rounded-2xl bg-primary-container/30 flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-primary-container/50 transition-all duration-300">
                 <span className="material-symbols-outlined text-xl text-primary"
                   style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
                   {action.icon}
@@ -60,7 +61,7 @@ export default async function AdminDashboardPage() {
                 <p className="font-sans font-semibold text-sm text-on-background">{action.label}</p>
                 <p className="text-xs text-on-surface-variant font-sans mt-0.5">{action.desc}</p>
               </div>
-              <span className="ml-auto material-symbols-outlined text-on-surface-variant/40 text-xl"
+              <span className="ml-auto material-symbols-outlined text-on-surface-variant/40 text-xl group-hover:translate-x-1 group-hover:text-primary transition-all duration-300"
                 style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
                 chevron_right
               </span>
@@ -69,7 +70,7 @@ export default async function AdminDashboardPage() {
         </div>
       </section>
 
-      <div className="pt-4 text-center">
+      <div className="pt-4 text-center animate-fade-in">
         <Link href="/" className="text-xs text-on-surface-variant/50 font-sans hover:text-primary transition-colors">
           Ver tienda pública →
         </Link>

@@ -62,9 +62,9 @@ export default function ProductForm({ categories, initialData, productId, mode, 
   const labelClass = 'block text-xs font-semibold font-sans tracking-wider uppercase text-on-surface-variant mb-1.5';
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5 animate-fade-up">
       {error && (
-        <div className="rounded-2xl px-4 py-3 text-sm font-sans bg-red-50 border border-red-100 text-red-600">
+        <div className="rounded-2xl px-4 py-3 text-sm font-sans bg-red-50 border border-red-100 text-red-600 animate-scale-in">
           ⚠️ {error}
         </div>
       )}
@@ -94,7 +94,7 @@ export default function ProductForm({ categories, initialData, productId, mode, 
         </div>
 
         <div>
-          <label className={labelClass}>Precio (CLP)</label>
+          <label className={labelClass}>Precio (Bs)</label>
           <input type="number" name="price" value={form.price} onChange={handleChange}
             min="0" step="0.01" placeholder="0" className={inputClass} />
         </div>
@@ -122,7 +122,8 @@ export default function ProductForm({ categories, initialData, productId, mode, 
               </div>
             </div>
             {previewUrl && (
-              <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-white/40">
+              <div className="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-white/40 animate-pop-in"
+                style={{ boxShadow: '0 8px 24px rgba(111,89,86,0.15)' }}>
                 <Image src={previewUrl} alt="Preview" fill className="object-cover"
                   unoptimized onError={() => setPreviewUrl('')} />
               </div>
@@ -137,7 +138,7 @@ export default function ProductForm({ categories, initialData, productId, mode, 
           Cancelar
         </button>
         <button type="submit" disabled={saving || uploading}
-          className="flex-1 px-4 py-3 rounded-2xl text-sm font-semibold font-sans bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50">
+          className="glossy-reflection flex-1 px-4 py-3 rounded-2xl text-sm font-semibold font-sans bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:hover:translate-y-0">
           {saving ? 'Guardando…' : mode === 'create' ? 'Agregar al catálogo' : 'Guardar cambios'}
         </button>
       </div>
