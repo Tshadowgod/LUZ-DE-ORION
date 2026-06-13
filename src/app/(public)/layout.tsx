@@ -10,7 +10,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           solo el contenido central hace scroll */}
       <div className="app-shell">
         <TopHeader />
-        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain min-h-0 w-full">
           <main className="py-6 pb-10 max-w-screen-xl mx-auto px-6 w-full">
             {children}
           </main>
