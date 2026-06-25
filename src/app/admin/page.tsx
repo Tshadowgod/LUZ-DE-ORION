@@ -5,10 +5,13 @@ import { products, categories, announcements } from '@/lib/schema';
 import { count, sum, lte, eq } from 'drizzle-orm';
 
 export default async function AdminDashboardPage() {
-  const [totalProducts] = await db.select({ count: count() }).from(products);
-  const [totalStock]    = await db.select({ total: sum(products.stock) }).from(products);
-  const [lowStock]      = await db.select({ count: count() }).from(products).where(lte(products.stock, 3));
-  const [activeNotices] = await db.select({ count: count() }).from(announcements).where(eq(announcements.isActive, true));
+  // Las 4 consultas en paralelo: 1 sola espera de red en vez de 4 en serie.
+  const [[totalProducts], [totalStock], [lowStock], [activeNotices]] = await Promise.all([
+    db.select({ count: count() }).from(products),
+    db.select({ total: sum(products.stock) }).from(products),
+    db.select({ count: count() }).from(products).where(lte(products.stock, 3)),
+    db.select({ count: count() }).from(announcements).where(eq(announcements.isActive, true)),
+  ]);
 
   const stats = [
     { value: totalProducts.count, label: 'Productos',  icon: 'inventory_2' },
