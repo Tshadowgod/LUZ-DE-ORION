@@ -45,15 +45,6 @@ export default function BottomNav() {
         )}
         <span className="text-[9px] mt-0.5 font-semibold tracking-wider uppercase font-sans">Carrito</span>
       </button>
-
-      {/* Admin */}
-      <Link href="/admin"
-        className="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-primary transition-all duration-300">
-        <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
-          admin_panel_settings
-        </span>
-        <span className="text-[9px] mt-0.5 font-semibold tracking-wider uppercase font-sans">Admin</span>
-      </Link>
     </nav>
   );
 }
