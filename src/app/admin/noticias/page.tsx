@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { announcements } from '@/lib/schema';
 import { desc } from 'drizzle-orm';
 import Link from 'next/link';
+import Image from 'next/image';
 import AnnouncementActions from './AnnouncementActions';
 
 export default async function AdminNoticiasPage() {
@@ -39,7 +40,8 @@ export default async function AdminNoticiasPage() {
               <div className="flex gap-4 p-4 items-start">
                 <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                   {item.imageUrl
-                    ? <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                    ? <Image src={item.imageUrl} alt={item.title} width={80} height={80}
+                        className="w-full h-full object-cover" unoptimized />
                     : <span className="text-2xl">📢</span>
                   }
                 </div>

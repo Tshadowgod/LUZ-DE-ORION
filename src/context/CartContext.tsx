@@ -30,11 +30,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect --
+       Hidratación única desde localStorage: no existe en SSR, por lo que
+       debe leerse tras el montaje. "hydrated" evita sobrescribir el carrito
+       guardado con el estado inicial vacío. */
     const stored = localStorage.getItem('ldo_cart');
     if (stored) {
-      try { setItems(JSON.parse(stored)); } catch { /* ignore */ }
+      try { setItems(JSON.parse(stored)); } catch { /* carrito corrupto: ignorar */ }
     }
     setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   useEffect(() => {

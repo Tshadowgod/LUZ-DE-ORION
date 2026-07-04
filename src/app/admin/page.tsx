@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import { products, categories, announcements } from '@/lib/schema';
+import { products, announcements } from '@/lib/schema';
 import { count, sum, lte, eq } from 'drizzle-orm';
 
 export default async function AdminDashboardPage() {

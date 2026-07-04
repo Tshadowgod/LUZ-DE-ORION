@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import CategoryFilter from '@/components/CategoryFilter';
 import DeleteModal from '@/components/DeleteModal';
@@ -12,46 +12,53 @@ type Product  = { id: number; name: string; description: string | null; price: s
                   stock: number; imageUrl: string | null; category: Category | null };
 
 function AdminCatalogoContent() {
+  const router           = useRouter();
   const searchParams     = useSearchParams();
   const selectedCategory = searchParams.get('categoria');
   const searchQuery      = searchParams.get('buscar');
 
-  const [products,     setProducts]     = useState<Product[]>([]);
+  // "loading" se deriva comparando la consulta cargada con la actual:
+  // así el efecto no necesita setLoading(true) síncrono.
+  const queryKey = `${selectedCategory ?? ''}|${searchQuery ?? ''}`;
+  const [result,       setResult]       = useState<{ key: string; products: Product[] } | null>(null);
   const [categories,   setCategories]   = useState<Category[]>([]);
-  const [loading,      setLoading]      = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [deleting,     setDeleting]     = useState(false);
   const [search,       setSearch]       = useState(searchQuery ?? '');
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedCategory) params.set('categoria', selectedCategory);
-      if (searchQuery)      params.set('buscar', searchQuery);
-      const res = await fetch(`/api/productos?${params}`);
-      setProducts(await res.json());
-    } finally { setLoading(false); }
-  }, [selectedCategory, searchQuery]);
+  const loading  = result?.key !== queryKey;
+  const products = loading ? [] : result!.products;
 
   useEffect(() => { fetch('/api/categorias').then(r => r.json()).then(setCategories); }, []);
-  useEffect(() => { fetchProducts(); }, [fetchProducts]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const params = new URLSearchParams();
+    if (selectedCategory) params.set('categoria', selectedCategory);
+    if (searchQuery)      params.set('buscar', searchQuery);
+    fetch(`/api/productos?${params}`)
+      .then(r => r.json())
+      .then((data: Product[]) => { if (!cancelled) setResult({ key: queryKey, products: data }); })
+      .catch(() => { if (!cancelled) setResult({ key: queryKey, products: [] }); });
+    return () => { cancelled = true; };
+  }, [queryKey, selectedCategory, searchQuery]);
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      await fetch(`/api/productos/${deleteTarget.id}`, { method: 'DELETE' });
-      setProducts(prev => prev.filter(p => p.id !== deleteTarget.id));
+      const res = await fetch(`/api/productos/${deleteTarget.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('No se pudo eliminar');
+      setResult(prev => prev ? { ...prev, products: prev.products.filter(p => p.id !== deleteTarget.id) } : prev);
       setDeleteTarget(null);
     } finally { setDeleting(false); }
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams(window.location.search);
-    if (search) params.set('buscar', search); else params.delete('buscar');
-    window.location.href = `/admin/catalogo?${params.toString()}`;
+    const params = new URLSearchParams(searchParams.toString());
+    if (search.trim()) params.set('buscar', search.trim()); else params.delete('buscar');
+    router.push(`/admin/catalogo?${params.toString()}`);
   };
 
   return (

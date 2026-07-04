@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 type Announcement = {
   id: number;
@@ -39,8 +40,9 @@ export default function Carousel({ items }: { items: Announcement[] }) {
         <div key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-out ${i === current ? 'opacity-100' : 'opacity-0'}`}>
           {slide.imageUrl ? (
-            <img src={slide.imageUrl} alt={slide.title}
-              className={`w-full h-full object-cover ${i === current ? 'animate-ken-burns' : ''}`} />
+            <Image src={slide.imageUrl} alt={slide.title} fill priority={i === 0}
+              sizes="(max-width: 768px) 100vw, 768px"
+              className={`object-cover ${i === current ? 'animate-ken-burns' : ''}`} unoptimized />
           ) : (
             <div className="w-full h-full"
               style={{ background: 'linear-gradient(135deg, rgba(244,215,211,0.5) 0%, rgba(255,224,136,0.4) 100%)' }} />

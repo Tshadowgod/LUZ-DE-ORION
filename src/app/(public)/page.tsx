@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products, categories, announcements } from '@/lib/schema';
 import { eq, desc } from 'drizzle-orm';
@@ -12,17 +13,18 @@ export default async function PublicHomePage() {
   let cats: { id: number; name: string; slug: string; icon: string | null }[] = [];
 
   try {
-    notices = await db.select({ id: announcements.id, title: announcements.title, description: announcements.description, imageUrl: announcements.imageUrl })
-      .from(announcements).where(eq(announcements.isActive, true)).orderBy(desc(announcements.createdAt)).limit(5);
-
-    featured = await db.select({
-      id: products.id, name: products.name, price: products.price,
-      imageUrl: products.imageUrl, categoryIcon: categories.icon, categoryName: categories.name,
-    }).from(products).leftJoin(categories, eq(products.categoryId, categories.id))
-      .orderBy(desc(products.createdAt)).limit(8);
-
-    cats = await db.select({ id: categories.id, name: categories.name, slug: categories.slug, icon: categories.icon })
-      .from(categories).orderBy(categories.name);
+    // Las 3 consultas en paralelo: 1 sola espera de red en vez de 3 en serie.
+    [notices, featured, cats] = await Promise.all([
+      db.select({ id: announcements.id, title: announcements.title, description: announcements.description, imageUrl: announcements.imageUrl })
+        .from(announcements).where(eq(announcements.isActive, true)).orderBy(desc(announcements.createdAt)).limit(5),
+      db.select({
+        id: products.id, name: products.name, price: products.price,
+        imageUrl: products.imageUrl, categoryIcon: categories.icon, categoryName: categories.name,
+      }).from(products).leftJoin(categories, eq(products.categoryId, categories.id))
+        .orderBy(desc(products.createdAt)).limit(8),
+      db.select({ id: categories.id, name: categories.name, slug: categories.slug, icon: categories.icon })
+        .from(categories).orderBy(categories.name),
+    ]);
   } catch { /* DB not ready */ }
 
   return (
@@ -81,7 +83,8 @@ export default async function PublicHomePage() {
                 className={`flex-shrink-0 w-44 liquid-glass glass-card glossy-reflection rounded-[1.5rem] overflow-hidden group animate-fade-up stagger-${Math.min(i + 3, 6)}`}>
                 <div className="h-44 bg-primary-container/20 flex items-center justify-center relative overflow-hidden">
                   {p.imageUrl
-                    ? <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out" />
+                    ? <Image src={p.imageUrl} alt={p.name} fill sizes="176px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out" unoptimized />
                     : <span className="text-4xl opacity-50">{p.categoryIcon ?? '💍'}</span>
                   }
                 </div>

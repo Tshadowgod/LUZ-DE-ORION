@@ -1,22 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 
 export default function CartSidebar() {
   const { items, removeItem, updateQuantity, clearCart, total, count, isOpen, setIsOpen } = useCart();
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [visible, setVisible] = useState(isOpen);
-  const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) { setVisible(true); setClosing(false); }
-    else if (visible) {
-      setClosing(true);
-      const t = setTimeout(() => { setVisible(false); setClosing(false); }, 350);
-      return () => clearTimeout(t);
-    }
-  }, [isOpen, visible]);
 
   const close = () => setIsOpen(false);
 
@@ -50,20 +40,12 @@ export default function CartSidebar() {
     window.open(url, '_blank');
   };
 
-  if (!visible) return null;
-
   return (
     <>
-      <div className={`fixed inset-0 bg-black/25 backdrop-blur-[3px] z-50 transition-opacity duration-300 ${closing ? 'opacity-0' : 'animate-fade-in'}`}
-        onClick={close} />
-      <div className={`fixed right-0 top-0 h-full w-full max-w-sm z-50 flex flex-col ${closing ? 'animate-slide-out' : 'animate-slide-in'}`}
-        style={{
-          background: 'linear-gradient(165deg, rgba(253,251,248,0.96) 0%, rgba(251,249,245,0.98) 100%)',
-          backdropFilter: 'blur(32px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-          borderLeft: '1px solid rgba(255,255,255,0.5)',
-          boxShadow: '-12px 0 48px rgba(111,89,86,0.12), inset 1px 0 0 rgba(255,255,255,0.6)',
-        }}>
+      <div className={`fixed inset-0 bg-black/25 backdrop-blur-[3px] z-50 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={close} aria-hidden={!isOpen} />
+      <div aria-hidden={!isOpen}
+        className={`liquid-glass-panel fixed right-0 top-0 h-full w-full max-w-sm z-50 flex flex-col transition-transform duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'}`}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-outline-variant/20">
@@ -93,7 +75,8 @@ export default function CartSidebar() {
                 className={`liquid-glass rounded-[1.5rem] p-3 flex gap-3 items-center animate-fade-up stagger-${Math.min(idx + 1, 6)} transition-shadow duration-300 hover:shadow-md`}>
                 <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                   {item.imageUrl ? (
-                    <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    <Image src={item.imageUrl} alt={item.name} width={56} height={56}
+                      className="w-full h-full object-cover" unoptimized />
                   ) : (
                     <span className="text-2xl">{item.categoryIcon ?? '💍'}</span>
                   )}
