@@ -51,6 +51,12 @@ export default function CartSidebar() {
 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(parts.join('\n'))}`;
     window.open(url, '_blank');
+
+    // Pedido enviado: vaciar el carrito para que al volver empiece de cero
+    clearCart();
+    setCustomerName('');
+    setCustomerPhone('');
+    close();
   };
 
   return (
