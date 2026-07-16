@@ -3,9 +3,9 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { products, categories } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import Image from 'next/image';
 import Link from 'next/link';
 import AddToCartButton from './AddToCartButton';
+import ImageLightbox from './ImageLightbox';
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -34,16 +34,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="liquid-glass glossy-reflection rounded-[2.5rem] overflow-hidden animate-scale-in">
-        <div className="relative h-80 overflow-hidden">
-          {product.imageUrl ? (
-            <Image src={product.imageUrl} alt={product.name} fill className="object-cover" unoptimized />
-          ) : (
+        {product.imageUrl ? (
+          <ImageLightbox src={product.imageUrl} alt={product.name} />
+        ) : (
+          <div className="relative h-80 overflow-hidden">
             <div className="absolute inset-0 bg-primary-container/20 flex items-center justify-center">
               <span className="text-9xl opacity-30">{product.category?.icon ?? '💍'}</span>
             </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent" />
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent" />
+          </div>
+        )}
 
         <div className="p-8 space-y-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
