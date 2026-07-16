@@ -30,6 +30,27 @@ export const announcements = pgTable('announcements', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+export const orders = pgTable('orders', {
+  id: serial('id').primaryKey(),
+  customerName: varchar('customer_name', { length: 255 }),
+  customerPhone: varchar('customer_phone', { length: 50 }),
+  total: numeric('total', { precision: 10, scale: 2 }).notNull(),
+  status: varchar('status', { length: 20 }).default('nuevo').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Los items guardan nombre/precio/imagen como copia: el pedido queda
+// intacto aunque el producto se edite o elimine después.
+export const orderItems = pgTable('order_items', {
+  id: serial('id').primaryKey(),
+  orderId: integer('order_id').references(() => orders.id, { onDelete: 'cascade' }).notNull(),
+  productId: integer('product_id'),
+  name: varchar('name', { length: 255 }).notNull(),
+  price: numeric('price', { precision: 10, scale: 2 }),
+  imageUrl: text('image_url'),
+  quantity: integer('quantity').notNull(),
+});
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
 }));
@@ -47,5 +68,7 @@ export type Product = typeof products.$inferSelect;
 export type NewProduct = typeof products.$inferInsert;
 export type Announcement = typeof announcements.$inferSelect;
 export type NewAnnouncement = typeof announcements.$inferInsert;
+export type Order = typeof orders.$inferSelect;
+export type OrderItem = typeof orderItems.$inferSelect;
 
 export type ProductWithCategory = Product & { category: Category };

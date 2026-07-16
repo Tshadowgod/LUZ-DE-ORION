@@ -11,6 +11,19 @@ export default function CartSidebar() {
   const close = () => setIsOpen(false);
 
   const sendToWhatsApp = () => {
+    // Registrar el pedido en el panel admin; sin await para que el
+    // navegador no bloquee la apertura de WhatsApp como popup.
+    void fetch('/api/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        customerName: customerName.trim(),
+        customerPhone: customerPhone.trim(),
+        items: items.map(i => ({ id: i.id, quantity: i.quantity })),
+      }),
+    }).catch(() => {});
+
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '';
     const lines = items.map(i =>
       `   💎 ${i.quantity}x ${i.name}${i.price ? `  →  Bs ${(Number(i.price) * i.quantity).toLocaleString('es-BO')}` : ''}`

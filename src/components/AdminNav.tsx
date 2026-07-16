@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 const tabs = [
-  { href: '/admin',           icon: 'dashboard',   label: 'Panel'    },
-  { href: '/admin/catalogo',  icon: 'inventory_2', label: 'Catálogo' },
-  { href: '/admin/noticias',  icon: 'campaign',    label: 'Noticias' },
+  { href: '/admin',           icon: 'dashboard',    label: 'Panel'    },
+  { href: '/admin/catalogo',  icon: 'inventory_2',  label: 'Catálogo' },
+  { href: '/admin/pedidos',   icon: 'receipt_long', label: 'Pedidos'  },
+  { href: '/admin/noticias',  icon: 'campaign',     label: 'Noticias' },
 ];
 
 export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) {
@@ -42,13 +43,13 @@ export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) 
   );
 
   return (
-      <nav className="flex-none w-full h-20 flex justify-around items-center px-6 liquid-glass z-40 rounded-t-[2.5rem] border-t border-white/30"
+      <nav className="flex-none w-full h-20 flex justify-around items-center px-2 liquid-glass z-40 rounded-t-[2.5rem] border-t border-white/30"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {tabs.map(tab => {
           const active = tab.href === '/admin' ? pathname === '/admin' : pathname.startsWith(tab.href);
           return (
             <Link key={tab.href} href={tab.href} aria-current={active ? 'page' : undefined}
-              className={`flex flex-col items-center justify-center px-5 py-2 rounded-2xl transition-colors duration-300 ${
+              className={`flex flex-col items-center justify-center px-3 py-2 rounded-2xl transition-colors duration-300 ${
                 active ? 'text-primary liquid-glass-dark' : 'text-on-surface-variant/60 hover:text-primary'
               }`}>
               <span className="material-symbols-outlined text-2xl"
@@ -60,7 +61,7 @@ export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) 
           );
         })}
         <button onClick={handleLogout}
-          className="flex flex-col items-center justify-center px-5 py-2 rounded-2xl text-on-surface-variant/60 hover:text-red-400 transition-colors duration-300">
+          className="flex flex-col items-center justify-center px-3 py-2 rounded-2xl text-on-surface-variant/60 hover:text-red-400 transition-colors duration-300">
           <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
             logout
           </span>
