@@ -33,6 +33,10 @@
 }
 
 html { scroll-behavior: smooth; }
+/* El body debe medir exactamente el viewport visible: si fuera más alto
+   (p. ej. min-height 100vh en Chrome Android con la barra de direcciones
+   visible), el documento entero haría scroll y las barras del armazón
+   se "subirían" dejando una franja vacía debajo del menú. */
 html, body { height: 100%; max-width: 100%; overflow-x: hidden; }
 
 body {
@@ -64,8 +68,15 @@ body::before {
     radial-gradient(32% 36% at 78% 18%, rgba(255,224,136,0.34) 0%, transparent 70%),
     radial-gradient(36% 30% at 72% 82%, rgba(225,225,245,0.38) 0%, transparent 70%),
     radial-gradient(30% 30% at 15% 85%, rgba(255,224,136,0.25) 0%, transparent 70%);
-  animation: liquid-drift 28s ease-in-out infinite alternate;
-  will-change: transform;
+}
+/* La deriva continua invalida el desenfoque de todos los vidrios en cada
+   frame; solo compensa en escritorio. En móvil las manchas quedan
+   estáticas: mismo look líquido, cero costo de GPU. */
+@media (hover: hover) and (pointer: fine) {
+  body::before {
+    animation: liquid-drift 28s ease-in-out infinite alternate;
+    will-change: transform;
+  }
 }
 @keyframes liquid-drift {
   from { transform: translate3d(-2.5%, -1.5%, 0) scale(1)    rotate(0.001deg); }
@@ -179,6 +190,13 @@ body::before {
     0 4px 16px rgba(111,89,86,0.08),
     inset 0 1px 0 rgba(255,255,255,0.8);
   outline: none;
+}
+
+/* Las tarjetas fuera de pantalla no se pintan (ni su desenfoque):
+   el navegador las salta hasta que entran al viewport. */
+.cv-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 430px;
 }
 
 /* Tarjeta de vidrio interactiva: elevación + brillo al hover */

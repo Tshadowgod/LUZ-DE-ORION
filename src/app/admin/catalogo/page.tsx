@@ -113,7 +113,7 @@ function AdminCatalogoContent() {
           <p className="text-xs text-on-surface-variant/60 font-sans animate-fade-in">{products.length} pieza{products.length !== 1 ? 's' : ''}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {products.map((p, i) => (
-              <div key={p.id} className={`animate-fade-up stagger-${Math.min((i % 6) + 1, 6)}`}>
+              <div key={p.id} className={`cv-card animate-fade-up stagger-${Math.min((i % 6) + 1, 6)}`}>
                 <ProductCard product={p} mode="admin" onDelete={() => setDeleteTarget(p)} />
               </div>
             ))}

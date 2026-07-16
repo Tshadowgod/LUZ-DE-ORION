@@ -47,9 +47,9 @@ export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) 
         {tabs.map(tab => {
           const active = tab.href === '/admin' ? pathname === '/admin' : pathname.startsWith(tab.href);
           return (
-            <Link key={tab.href} href={tab.href}
-              className={`flex flex-col items-center justify-center transition-all duration-300 ${
-                active ? 'text-primary liquid-glass-dark px-5 py-2 rounded-2xl' : 'text-on-surface-variant/60 hover:text-primary'
+            <Link key={tab.href} href={tab.href} aria-current={active ? 'page' : undefined}
+              className={`flex flex-col items-center justify-center px-5 py-2 rounded-2xl transition-colors duration-300 ${
+                active ? 'text-primary liquid-glass-dark' : 'text-on-surface-variant/60 hover:text-primary'
               }`}>
               <span className="material-symbols-outlined text-2xl"
                 style={{ fontVariationSettings: `'FILL' ${active ? 1 : 0}, 'wght' 200, 'opsz' 24` }}>
@@ -60,7 +60,7 @@ export default function AdminNav({ slot = 'top' }: { slot?: 'top' | 'bottom' }) 
           );
         })}
         <button onClick={handleLogout}
-          className="flex flex-col items-center justify-center text-on-surface-variant/60 hover:text-red-400 transition-all duration-300">
+          className="flex flex-col items-center justify-center px-5 py-2 rounded-2xl text-on-surface-variant/60 hover:text-red-400 transition-colors duration-300">
           <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
             logout
           </span>
