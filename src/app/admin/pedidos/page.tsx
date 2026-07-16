@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 
 type OrderItem = {
@@ -14,15 +14,21 @@ type Order = {
 
 export default function PedidosPage() {
   const [pedidos, setPedidos] = useState<Order[] | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
+  const load = useCallback(() =>
     fetch('/api/pedidos')
       .then(r => r.json())
-      .then((data: Order[]) => { if (!cancelled) setPedidos(Array.isArray(data) ? data : []); })
-      .catch(() => { if (!cancelled) setPedidos([]); });
-    return () => { cancelled = true; };
-  }, []);
+      .then((data: Order[]) => setPedidos(Array.isArray(data) ? data : []))
+      .catch(() => setPedidos(prev => prev ?? [])),
+  []);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const refresh = () => {
+    setRefreshing(true);
+    load().finally(() => setRefreshing(false));
+  };
 
   const loading = pedidos === null;
   const nuevos = pedidos?.filter(p => p.status === 'nuevo').length ?? 0;
@@ -49,14 +55,24 @@ export default function PedidosPage() {
 
   return (
     <div className="space-y-6">
-      <section className="animate-fade-up">
-        <p className="text-[11px] font-bold tracking-[0.2em] text-primary font-sans uppercase mb-1 opacity-80">PANEL ADMIN</p>
-        <h2 className="font-display text-3xl font-semibold text-on-background">Pedidos</h2>
-        {!loading && pedidos.length > 0 && (
-          <p className="text-xs text-on-surface-variant/60 font-sans mt-1">
-            {pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}{nuevos > 0 ? ` · ${nuevos} nuevo${nuevos !== 1 ? 's' : ''}` : ''}
-          </p>
-        )}
+      <section className="animate-fade-up flex items-end justify-between gap-3 flex-wrap">
+        <div>
+          <p className="text-[11px] font-bold tracking-[0.2em] text-primary font-sans uppercase mb-1 opacity-80">PANEL ADMIN</p>
+          <h2 className="font-display text-3xl font-semibold text-on-background">Pedidos</h2>
+          {!loading && pedidos.length > 0 && (
+            <p className="text-xs text-on-surface-variant/60 font-sans mt-1">
+              {pedidos.length} pedido{pedidos.length !== 1 ? 's' : ''}{nuevos > 0 ? ` · ${nuevos} nuevo${nuevos !== 1 ? 's' : ''}` : ''}
+            </p>
+          )}
+        </div>
+        <button onClick={refresh} disabled={refreshing}
+          className="liquid-glass-dark flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-semibold font-sans text-on-surface-variant hover:text-primary active:scale-95 transition-all disabled:opacity-60">
+          <span className={`material-symbols-outlined text-lg block ${refreshing ? 'animate-spin' : ''}`}
+            style={{ fontVariationSettings: "'wght' 200, 'opsz' 20" }}>
+            refresh
+          </span>
+          {refreshing ? 'Actualizando…' : 'Actualizar'}
+        </button>
       </section>
 
       {loading ? (
