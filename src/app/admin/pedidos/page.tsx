@@ -15,6 +15,7 @@ type Order = {
 export default function PedidosPage() {
   const [pedidos, setPedidos] = useState<Order[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [preview, setPreview] = useState<{ url: string; name: string } | null>(null);
 
   const load = useCallback(() =>
     fetch('/api/pedidos')
@@ -140,14 +141,19 @@ export default function PedidosPage() {
                 <div className="space-y-2 mb-4">
                   {order.items.map(item => (
                     <div key={item.id} className="liquid-glass-dark rounded-2xl px-3 py-2 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
-                        {item.imageUrl ? (
+                      {item.imageUrl ? (
+                        <button type="button"
+                          onClick={() => setPreview({ url: item.imageUrl!, name: item.name })}
+                          aria-label={`Ver imagen de ${item.name}`}
+                          className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center cursor-zoom-in active:scale-95 transition-transform">
                           <Image src={item.imageUrl} alt={item.name} width={40} height={40}
                             className="w-full h-full object-cover" unoptimized />
-                        ) : (
+                        </button>
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                           <span className="text-lg">💍</span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="font-display text-sm font-medium text-on-background line-clamp-1">{item.name}</p>
                         {item.price && (
@@ -181,6 +187,29 @@ export default function PedidosPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Visor de imagen ampliada */}
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[6px] flex items-center justify-center p-5"
+          onClick={() => setPreview(null)}>
+          <div
+            className="liquid-glass-panel rounded-[2rem] p-4 w-full max-w-md animate-scale-in"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between gap-3 mb-3 px-1">
+              <p className="font-display text-base font-semibold text-on-background line-clamp-1">{preview.name}</p>
+              <button type="button" onClick={() => setPreview(null)} aria-label="Cerrar"
+                className="p-2 rounded-full liquid-glass-dark text-on-surface-variant hover:text-primary hover:rotate-90 transition-all duration-300 flex-shrink-0">
+                <span className="material-symbols-outlined text-xl block" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>close</span>
+              </button>
+            </div>
+            <div className="rounded-[1.5rem] overflow-hidden bg-primary-container/20">
+              <Image src={preview.url} alt={preview.name} width={800} height={800}
+                className="w-full h-auto max-h-[70vh] object-contain" unoptimized />
+            </div>
+          </div>
         </div>
       )}
     </div>
