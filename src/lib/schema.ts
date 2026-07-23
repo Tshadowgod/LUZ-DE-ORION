@@ -14,6 +14,8 @@ export const products = pgTable('products', {
   name: varchar('name', { length: 255 }).notNull(),
   description: text('description'),
   price: numeric('price', { precision: 10, scale: 2 }),
+  // Costo de adquisicion: solo visible en el panel admin, nunca en la API publica
+  cost: numeric('cost', { precision: 10, scale: 2 }),
   stock: integer('stock').default(0).notNull(),
   categoryId: integer('category_id').references(() => categories.id).notNull(),
   imageUrl: text('image_url'),
