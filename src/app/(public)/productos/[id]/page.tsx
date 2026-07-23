@@ -22,8 +22,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   if (!product) notFound();
 
-  const stockLabel = product.stock === 0 ? 'Agotado' : product.stock <= 3 ? `Solo ${product.stock} disponibles` : `${product.stock} en stock`;
-  const stockColor = product.stock === 0 ? 'text-red-500 bg-red-50 border-red-100' : product.stock <= 3 ? 'text-tertiary bg-tertiary-container/30 border-tertiary/20' : 'text-primary bg-primary-container/40 border-primary/20';
+  // Sin numeros de stock a la vista del cliente: solo disponible o agotado
+  const stockLabel = product.stock === 0 ? 'Agotado' : 'Disponible';
+  const stockColor = product.stock === 0
+    ? 'text-red-500 bg-red-50 border-red-100'
+    : 'text-primary bg-primary-container/40 border-primary/20';
 
   return (
     <div className="max-w-2xl mx-auto">
