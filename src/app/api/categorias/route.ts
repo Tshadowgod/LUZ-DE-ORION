@@ -5,7 +5,8 @@ import { categories } from '@/lib/schema';
 
 export async function GET() {
   try {
-    const result = await db.select().from(categories).orderBy(categories.name);
+    const result = await db.select().from(categories)
+      .orderBy(categories.sortOrder, categories.name);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching categories:', error);

@@ -7,6 +7,8 @@ export const categories = pgTable('categories', {
   slug: varchar('slug', { length: 100 }).notNull().unique(),
   icon: varchar('icon', { length: 10 }),
   color: varchar('color', { length: 50 }),
+  // Orden manual de las pestanas; a igual valor se ordena por nombre
+  sortOrder: integer('sort_order').default(0).notNull(),
 });
 
 export const products = pgTable('products', {
