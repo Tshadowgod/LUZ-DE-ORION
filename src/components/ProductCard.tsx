@@ -17,14 +17,9 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
   const [imgError, setImgError] = useState(false);
   const [added, setAdded] = useState(false);
 
-  // Al cliente solo le avisamos si esta agotado; las unidades disponibles
-  // se ven unicamente en el panel admin.
-  const stockLabel = product.stock === 0
-    ? 'Agotado'
-    : mode === 'admin'
-      ? (product.stock <= 3 ? `Solo ${product.stock}` : `${product.stock} uds.`)
-      : null;
-  const stockColor = product.stock === 0 ? 'text-red-500' : product.stock <= 3 ? 'text-tertiary' : 'text-primary';
+  // Nunca mostramos el numero de unidades en la tarjeta: solo avisamos
+  // cuando el producto esta agotado. El conteo esta en el apartado Inventario.
+  const agotado = product.stock === 0;
 
   const handleAddToCart = () => {
     if (product.stock === 0 || !onAddToCart) return;
@@ -46,10 +41,10 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
-        {stockLabel && (
-          <div className={`absolute top-3 right-3 text-xs font-semibold font-sans tracking-wide ${stockColor}`}
+        {agotado && (
+          <div className="absolute top-3 right-3 text-xs font-semibold font-sans tracking-wide text-red-500"
             style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(8px)', padding: '3px 10px', borderRadius: '999px', border: '0.5px solid rgba(255,255,255,0.4)' }}>
-            {stockLabel}
+            Agotado
           </div>
         )}
       </div>
