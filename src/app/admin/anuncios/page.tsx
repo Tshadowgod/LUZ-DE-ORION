@@ -4,11 +4,11 @@ import { announcements } from '@/lib/schema';
 import { desc, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import Image from 'next/image';
-import AnnouncementActions from './AnnouncementActions';
+import AnnouncementActions from '../noticias/AnnouncementActions';
 
-export default async function AdminNoticiasPage() {
+export default async function AdminAnunciosPage() {
   const items = await db.select().from(announcements)
-    .where(eq(announcements.placement, 'carousel'))
+    .where(eq(announcements.placement, 'popup'))
     .orderBy(desc(announcements.createdAt));
 
   return (
@@ -16,23 +16,24 @@ export default async function AdminNoticiasPage() {
       <div className="flex items-end justify-between gap-4 animate-fade-up">
         <div>
           <p className="text-[11px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">ADMIN</p>
-          <h2 className="font-display text-3xl font-semibold text-on-background">Noticias</h2>
+          <h2 className="font-display text-3xl font-semibold text-on-background">Aviso emergente</h2>
+          <p className="text-xs text-on-surface-variant font-sans mt-1">Aparece al entrar a la tienda. El cliente lo cierra con la X.</p>
         </div>
-        <Link href="/admin/noticias/nueva"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-300">
+        <Link href="/admin/anuncios/nuevo"
+          className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md active:scale-95 transition-all duration-300">
           <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'wght' 200, 'opsz' 20" }}>add</span>
-          Nueva
+          Nuevo
         </Link>
       </div>
 
       {items.length === 0 ? (
         <div className="text-center py-20 animate-scale-in">
-          <span className="text-6xl block mb-4 animate-float">📢</span>
-          <p className="font-display text-xl font-medium text-on-background">Sin noticias aún</p>
-          <p className="text-on-surface-variant text-sm font-sans mt-1 mb-6">Crea tu primera promoción o anuncio</p>
-          <Link href="/admin/noticias/nueva"
+          <span className="text-6xl block mb-4 animate-float">🔔</span>
+          <p className="font-display text-xl font-medium text-on-background">Sin avisos aún</p>
+          <p className="text-on-surface-variant text-sm font-sans mt-1 mb-6">Crea un aviso que aparezca al entrar a la tienda</p>
+          <Link href="/admin/anuncios/nuevo"
             className="inline-block px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold font-sans hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-            Crear primera noticia
+            Crear primer aviso
           </Link>
         </div>
       ) : (
@@ -44,7 +45,7 @@ export default async function AdminNoticiasPage() {
                   {item.imageUrl
                     ? <Image src={item.imageUrl} alt={item.title} width={80} height={80}
                         className="w-full h-full object-cover" unoptimized />
-                    : <span className="text-2xl">📢</span>
+                    : <span className="text-2xl">🔔</span>
                   }
                 </div>
                 <div className="flex-1 min-w-0">
@@ -53,7 +54,7 @@ export default async function AdminNoticiasPage() {
                     <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold font-sans uppercase tracking-wide ${
                       item.isActive ? 'bg-primary-container/40 text-primary' : 'bg-surface-container text-on-surface-variant/50'
                     }`}>
-                      {item.isActive ? 'Activa' : 'Inactiva'}
+                      {item.isActive ? 'Activo' : 'Inactivo'}
                     </span>
                   </div>
                   {item.description && (
@@ -64,7 +65,7 @@ export default async function AdminNoticiasPage() {
                   </p>
                 </div>
               </div>
-              <AnnouncementActions id={item.id} isActive={item.isActive} editHref={`/admin/noticias/${item.id}/editar`} />
+              <AnnouncementActions id={item.id} isActive={item.isActive} editHref={`/admin/anuncios/${item.id}/editar`} />
             </div>
           ))}
         </div>

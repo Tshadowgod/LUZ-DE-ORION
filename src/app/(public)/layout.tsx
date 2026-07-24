@@ -2,6 +2,7 @@ import { CartProvider } from '@/context/CartContext';
 import TopHeader from '@/components/TopHeader';
 import BottomNav from '@/components/BottomNav';
 import CartSidebar from '@/components/CartSidebar';
+import PopupAnnouncement from '@/components/PopupAnnouncement';
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,6 +19,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <BottomNav />
       </div>
       <CartSidebar />
+      <PopupAnnouncement />
     </CartProvider>
   );
 }

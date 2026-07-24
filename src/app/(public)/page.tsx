@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { db } from '@/lib/db';
 import { products, categories, announcements } from '@/lib/schema';
-import { eq, desc } from 'drizzle-orm';
+import { and, eq, desc } from 'drizzle-orm';
 import Carousel from '@/components/Carousel';
 
 export default async function PublicHomePage() {
@@ -16,7 +16,9 @@ export default async function PublicHomePage() {
     // Las 3 consultas en paralelo: 1 sola espera de red en vez de 3 en serie.
     [notices, featured, cats] = await Promise.all([
       db.select({ id: announcements.id, title: announcements.title, description: announcements.description, imageUrl: announcements.imageUrl })
-        .from(announcements).where(eq(announcements.isActive, true)).orderBy(desc(announcements.createdAt)).limit(5),
+        .from(announcements)
+        .where(and(eq(announcements.isActive, true), eq(announcements.placement, 'carousel')))
+        .orderBy(desc(announcements.createdAt)).limit(5),
       db.select({
         id: products.id, name: products.name, price: products.price,
         imageUrl: products.imageUrl, categoryIcon: categories.icon, categoryName: categories.name,

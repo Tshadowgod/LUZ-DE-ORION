@@ -2,16 +2,26 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { announcements } from '@/lib/schema';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { isAdminRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   const showAll = request.nextUrl.searchParams.get('all') === 'true';
+  // Filtro opcional por ubicacion: 'carousel' o 'popup'
+  const placement = request.nextUrl.searchParams.get('placement');
   const isAdmin = showAll ? await isAdminRequest(request) : false;
 
-  const items = isAdmin
-    ? await db.select().from(announcements).orderBy(desc(announcements.createdAt))
-    : await db.select().from(announcements).where(eq(announcements.isActive, true)).orderBy(desc(announcements.createdAt));
+  const conditions = [];
+  if (!isAdmin) conditions.push(eq(announcements.isActive, true));
+  if (placement) conditions.push(eq(announcements.placement, placement));
+
+  const where = conditions.length === 1 ? conditions[0]
+    : conditions.length > 1 ? and(...conditions)
+    : undefined;
+
+  const items = await db.select().from(announcements)
+    .where(where)
+    .orderBy(desc(announcements.createdAt));
 
   return NextResponse.json(items);
 }
@@ -28,6 +38,7 @@ export async function POST(request: NextRequest) {
     description: body.description || null,
     imageUrl: body.imageUrl || null,
     isActive: body.isActive ?? true,
+    placement: body.placement === 'popup' ? 'popup' : 'carousel',
   }).returning();
 
   return NextResponse.json(item, { status: 201 });

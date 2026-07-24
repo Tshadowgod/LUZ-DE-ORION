@@ -23,7 +23,7 @@ export default function AnnouncementActions({ id, isActive, editHref }: Props) {
   };
 
   const handleDelete = async () => {
-    if (!confirm('¿Eliminar esta noticia?')) return;
+    if (!confirm('¿Eliminar esta publicación?')) return;
     await fetch(`/api/noticias/${id}`, { method: 'DELETE' });
     router.refresh();
   };

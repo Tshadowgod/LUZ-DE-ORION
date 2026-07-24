@@ -31,6 +31,9 @@ export const announcements = pgTable('announcements', {
   description: text('description'),
   imageUrl: text('image_url'),
   isActive: boolean('is_active').default(true).notNull(),
+  // Donde se muestra: 'carousel' (carrusel del inicio) o 'popup'
+  // (aviso emergente que aparece al entrar, con una X para cerrar).
+  placement: varchar('placement', { length: 20 }).default('carousel').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

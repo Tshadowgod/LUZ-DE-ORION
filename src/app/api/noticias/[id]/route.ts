@@ -17,6 +17,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     ...(body.description !== undefined && { description: body.description || null }),
     ...(body.imageUrl    !== undefined && { imageUrl: body.imageUrl || null }),
     ...(body.isActive    !== undefined && { isActive: body.isActive }),
+    ...(body.placement   !== undefined && { placement: body.placement === 'popup' ? 'popup' : 'carousel' }),
   }).where(eq(announcements.id, Number(id))).returning();
 
   if (!updated) return NextResponse.json({ error: 'No encontrado' }, { status: 404 });

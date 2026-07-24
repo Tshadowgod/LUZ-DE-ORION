@@ -4,9 +4,21 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 type FormData = { title: string; description: string; imageUrl: string; isActive: boolean };
-type Props = { mode: 'create' | 'edit'; announcementId?: number; initialData?: Partial<FormData> };
+type Placement = 'carousel' | 'popup';
+type Props = {
+  mode: 'create' | 'edit';
+  announcementId?: number;
+  initialData?: Partial<FormData>;
+  placement?: Placement;
+  // A donde volver tras guardar (cada apartado tiene su propia lista)
+  backHref?: string;
+};
 
-export default function AnnouncementForm({ mode, announcementId, initialData }: Props) {
+export default function AnnouncementForm({
+  mode, announcementId, initialData,
+  placement = 'carousel', backHref = '/admin/noticias',
+}: Props) {
+  const isPopup = placement === 'popup';
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<FormData>({
@@ -50,11 +62,11 @@ export default function AnnouncementForm({ mode, announcementId, initialData }: 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, placement }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Error al guardar');
-      router.push('/admin/noticias'); router.refresh();
+      router.push(backHref); router.refresh();
     } catch (err) { setError(err instanceof Error ? err.message : 'Error'); }
     finally { setSaving(false); }
   };
@@ -112,9 +124,13 @@ export default function AnnouncementForm({ mode, announcementId, initialData }: 
           className="w-5 h-5 rounded-lg accent-primary" />
         <div>
           <label htmlFor="isActive" className="text-sm font-semibold font-sans text-on-background cursor-pointer">
-            Publicar en carrusel
+            {isPopup ? 'Activar aviso emergente' : 'Publicar en carrusel'}
           </label>
-          <p className="text-xs text-on-surface-variant font-sans">Visible para clientes en la página principal</p>
+          <p className="text-xs text-on-surface-variant font-sans">
+            {isPopup
+              ? 'Aparece al entrar a la tienda, el cliente lo cierra con la X'
+              : 'Visible para clientes en la página principal'}
+          </p>
         </div>
       </div>
 
@@ -125,7 +141,7 @@ export default function AnnouncementForm({ mode, announcementId, initialData }: 
         </button>
         <button type="submit" disabled={saving || uploading}
           className="flex-1 px-4 py-3 rounded-2xl text-sm font-semibold font-sans bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50">
-          {saving ? 'Guardando…' : mode === 'create' ? 'Publicar noticia' : 'Guardar cambios'}
+          {saving ? 'Guardando…' : mode === 'create' ? (isPopup ? 'Publicar aviso' : 'Publicar noticia') : 'Guardar cambios'}
         </button>
       </div>
     </form>
