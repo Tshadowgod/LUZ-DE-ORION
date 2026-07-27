@@ -45,7 +45,7 @@ export default function PopupAnnouncement() {
       className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-[6px] flex items-center justify-center p-5 animate-fade-in"
       onClick={close}>
       <div
-        className="liquid-glass-panel rounded-[2rem] w-full max-w-sm overflow-hidden animate-scale-in relative"
+        className="liquid-glass-panel rounded-[2rem] w-full max-w-sm max-h-[88vh] overflow-y-auto scroll-hide animate-scale-in relative"
         onClick={e => e.stopPropagation()}>
         {/* Boton X para cerrar */}
         <button type="button" onClick={close} aria-label="Cerrar aviso"
@@ -55,11 +55,10 @@ export default function PopupAnnouncement() {
         </button>
 
         {item.imageUrl && !imgError && (
-          <div className="relative w-full h-56 bg-primary-container/20">
-            <Image src={item.imageUrl} alt={item.title} fill
-              sizes="(max-width: 768px) 100vw, 384px"
-              className="object-cover" unoptimized onError={() => setImgError(true)} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          // Imagen completa (sin recortar): se muestra tal cual la subiste
+          <div className="w-full bg-primary-container/20 rounded-t-[2rem] overflow-hidden flex items-center justify-center">
+            <Image src={item.imageUrl} alt={item.title} width={800} height={800}
+              className="w-full h-auto max-h-[55vh] object-contain" unoptimized onError={() => setImgError(true)} />
           </div>
         )}
 
