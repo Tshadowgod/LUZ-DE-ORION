@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 const tabs = [
   { href: '/admin',            icon: 'dashboard',            label: 'Panel'      },
   { href: '/admin/catalogo',   icon: 'inventory_2',          label: 'Catálogo'   },
+  { href: '/admin/categorias', icon: 'sell',                 label: 'Categorías' },
   { href: '/admin/inventario', icon: 'warehouse',            label: 'Inventario' },
   { href: '/admin/pedidos',    icon: 'receipt_long',         label: 'Pedidos'    },
   { href: '/admin/noticias',   icon: 'campaign',             label: 'Noticias'   },
