@@ -40,15 +40,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         {product.imageUrl ? (
           <ImageLightbox src={product.imageUrl} alt={product.name} />
         ) : (
-          <div className="relative h-80 overflow-hidden">
+          <div className="relative h-56 sm:h-80 overflow-hidden">
             <div className="absolute inset-0 bg-primary-container/20 flex items-center justify-center">
-              <span className="text-9xl opacity-30">{product.category?.icon ?? '💍'}</span>
+              <span className="text-7xl sm:text-9xl opacity-30">{product.category?.icon ?? '💍'}</span>
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent" />
           </div>
         )}
 
-        <div className="p-8 space-y-4">
+        <div className="p-5 sm:p-8 space-y-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               {product.category && (

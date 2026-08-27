@@ -29,15 +29,15 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
   };
 
   return (
-    <div className="flex-shrink-0 w-full liquid-glass glass-card glossy-reflection rounded-[2rem] overflow-hidden group">
-      <div className="h-64 overflow-hidden relative">
+    <div className="flex-shrink-0 w-full liquid-glass glass-card glossy-reflection rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden group">
+      <div className="h-36 sm:h-56 lg:h-64 overflow-hidden relative">
         {product.imageUrl && !imgError ? (
           <Image src={product.imageUrl} alt={product.name} fill
             className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
             onError={() => setImgError(true)} unoptimized />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-primary-container/30">
-            <span className="text-6xl opacity-60">{product.category?.icon ?? '💍'}</span>
+            <span className="text-4xl sm:text-6xl opacity-60">{product.category?.icon ?? '💍'}</span>
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
@@ -49,35 +49,35 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
         )}
       </div>
 
-      <div className="p-5">
+      <div className="p-3 sm:p-5">
         {product.category && (
           <p className="text-[10px] font-bold tracking-[0.2em] text-tertiary font-sans uppercase mb-1">
             {product.category.icon} {product.category.name}
           </p>
         )}
-        <h4 className="font-display font-medium text-lg text-on-background leading-snug mb-1 line-clamp-1">
+        <h4 className="font-display font-medium text-sm sm:text-lg text-on-background leading-snug mb-1 line-clamp-1">
           {product.name}
         </h4>
         {product.description && (
-          <p className="text-on-surface-variant text-xs font-sans line-clamp-2 mb-2 opacity-70 leading-relaxed">
+          <p className="hidden sm:block text-on-surface-variant text-xs font-sans line-clamp-2 mb-2 opacity-70 leading-relaxed">
             {product.description}
           </p>
         )}
         {product.price && (
-          <p className="text-primary font-bold text-xl font-sans mb-4">
+          <p className="text-primary font-bold text-base sm:text-xl font-sans mb-3 sm:mb-4">
             Bs {Number(product.price).toLocaleString('es-BO')}
           </p>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           {mode === 'public' ? (
             <>
               <Link href={`/productos/${product.id}`}
-                className="flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl liquid-glass-dark text-primary hover:bg-primary-container/40 transition-colors">
+                className="flex-1 text-center text-[11px] sm:text-xs font-semibold font-sans py-2 sm:py-2.5 rounded-xl liquid-glass-dark text-primary hover:bg-primary-container/40 transition-colors">
                 Ver detalle
               </Link>
               <button onClick={handleAddToCart} disabled={product.stock === 0}
-                className={`flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl transition-all duration-300 ${
+                className={`flex-1 text-center text-[11px] sm:text-xs font-semibold font-sans py-2 sm:py-2.5 rounded-xl transition-all duration-300 ${
                   product.stock === 0
                     ? 'bg-surface-container text-on-surface-variant/40 cursor-not-allowed'
                     : added
@@ -90,7 +90,7 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
           ) : (
             <>
               <Link href={`/admin/catalogo/${product.id}/editar`}
-                className="flex-1 text-center text-xs font-semibold font-sans py-2.5 rounded-xl bg-tertiary-container/50 text-on-tertiary-container hover:bg-tertiary-container/70 transition-colors">
+                className="flex-1 text-center text-[11px] sm:text-xs font-semibold font-sans py-2 sm:py-2.5 rounded-xl bg-tertiary-container/50 text-on-tertiary-container hover:bg-tertiary-container/70 transition-colors">
                 ✏️ Editar
               </Link>
               {onDelete && (

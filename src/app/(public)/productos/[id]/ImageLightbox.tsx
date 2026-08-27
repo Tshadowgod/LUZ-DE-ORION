@@ -78,7 +78,7 @@ export default function ImageLightbox({ src, alt }: { src: string; alt: string }
   return (
     <>
       {/* Miniatura en la tarjeta (misma apariencia de siempre + pista de zoom) */}
-      <div className="relative h-80 overflow-hidden cursor-zoom-in" onClick={() => setOpen(true)}
+      <div className="relative h-56 sm:h-80 overflow-hidden cursor-zoom-in" onClick={() => setOpen(true)}
         role="button" aria-label={`Ampliar foto de ${alt}`} tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true); } }}>
         <Image src={src} alt={alt} fill className="object-cover" unoptimized />

@@ -87,8 +87,8 @@ function CatalogoContent() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+          {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[1.5rem] sm:rounded-[2rem] h-64 sm:h-96" />)}
         </div>
       ) : products.length === 0 ? (
         <div className="text-center py-20 animate-scale-in">
@@ -101,7 +101,7 @@ function CatalogoContent() {
           <p className="text-xs text-on-surface-variant/60 font-sans animate-fade-in">
             {products.length} pieza{products.length !== 1 ? 's' : ''} encontrada{products.length !== 1 ? 's' : ''}
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
             {products.map((p, i) => (
               <div key={p.id} className={`cv-card animate-fade-up stagger-${Math.min((i % 6) + 1, 6)}`}>
                 <ProductCard product={p} mode="public" onAddToCart={handleAddToCart} />
@@ -117,8 +117,8 @@ function CatalogoContent() {
 export default function CatalogoPage() {
   return (
     <Suspense fallback={
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
-        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[2rem] h-96" />)}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 mt-8">
+        {[...Array(6)].map((_, i) => <div key={i} className="liquid-glass skeleton-shimmer rounded-[1.5rem] sm:rounded-[2rem] h-64 sm:h-96" />)}
       </div>
     }>
       <CatalogoContent />
