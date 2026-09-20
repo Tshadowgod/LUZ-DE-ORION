@@ -9,6 +9,14 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // El bucket queda conectado directo al worker: no hacen falta claves de API
+  // ni secretos. Si le pusiste otro nombre al bucket, cambialo aca.
+  "r2_buckets": [
+    {
+      "binding": "FOTOS",
+      "bucket_name": "luz-de-orion"
+    }
+  ],
   "observability": {
     "enabled": true
   }

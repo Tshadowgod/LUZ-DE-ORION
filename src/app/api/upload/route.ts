@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { leerConfigR2, faltantesR2, subirAR2 } from '@/lib/r2';
+import { urlPublica, subirAR2 } from '@/lib/r2';
 
 // Ojo: aca NO se comprime. En Cloudflare Workers no corre sharp (es un modulo
 // nativo y Workers no ejecuta binarios), asi que las fotos se achican en el
@@ -28,12 +28,10 @@ function nombreLimpio(nombre: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    const config = leerConfigR2();
-    if (!config) {
-      const faltan = faltantesR2().join(', ');
-      console.error('R2 sin configurar. Faltan:', faltan);
+    if (!urlPublica()) {
+      console.error('Falta la variable R2_PUBLIC_URL');
       return NextResponse.json(
-        { error: `Almacenamiento sin configurar (faltan: ${faltan})` },
+        { error: 'Almacenamiento sin configurar (falta R2_PUBLIC_URL)' },
         { status: 500 },
       );
     }
@@ -57,7 +55,7 @@ export async function POST(request: NextRequest) {
     const clave = `productos/${Date.now()}-${nombreLimpio(file.name)}.${extension}`;
     const cuerpo = await file.arrayBuffer();
 
-    const url = await subirAR2(clave, cuerpo, file.type, config);
+    const url = await subirAR2(clave, cuerpo, file.type);
 
     return NextResponse.json({ url, bytes: file.size });
   } catch (error) {

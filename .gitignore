@@ -47,3 +47,4 @@ next-env.d.ts
 .open-next/
 .dev.vars
 .wrangler/
+worker-configuration.d.ts

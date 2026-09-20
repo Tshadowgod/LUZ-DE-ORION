@@ -1,58 +1,29 @@
-import { AwsClient } from 'aws4fetch';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 
-// Cliente de Cloudflare R2 por su API compatible con S3.
+// Guarda las fotos en Cloudflare R2.
 //
-// Usamos aws4fetch y no el SDK de AWS a proposito: pesa unos pocos KB, no tiene
-// dependencias, y evita el problema conocido de los checksums que el SDK nuevo
-// manda por defecto y R2 rechaza.
+// Como la app corre dentro de Workers, el bucket viene conectado por un
+// binding declarado en wrangler.jsonc ("FOTOS"). Eso significa que no hay
+// claves de API ni secretos que rotar: Cloudflare le da acceso al worker
+// directamente, y la escritura no sale a internet.
 //
-// Variables necesarias (Vercel > Settings > Environment Variables):
-//   R2_ACCOUNT_ID         el id de cuenta de Cloudflare
-//   R2_ACCESS_KEY_ID      del token de API de R2
-//   R2_SECRET_ACCESS_KEY  idem
-//   R2_BUCKET             nombre del bucket, por ejemplo luz-de-orion
-//   R2_PUBLIC_URL         dominio publico, por ejemplo https://fotos.luzdeorion.store
+// Unica variable necesaria (no es secreta):
+//   R2_PUBLIC_URL   dominio publico del bucket, ej https://fotos.luzdeorion.store
 
-export type ConfigR2 = {
-  accountId: string;
-  accessKeyId: string;
-  secretAccessKey: string;
-  bucket: string;
-  publicUrl: string;
+// Tipamos el bucket a mano en vez de usar worker-configuration.d.ts: esos
+// tipos son del runtime de Workers y pisan los del navegador, rompiendo el
+// res.json() de los componentes del cliente.
+type BucketR2 = {
+  put(
+    clave: string,
+    valor: ArrayBuffer,
+    opciones?: { httpMetadata?: { contentType?: string; cacheControl?: string } },
+  ): Promise<unknown>;
 };
 
-export function leerConfigR2(): ConfigR2 | null {
-  const {
-    R2_ACCOUNT_ID: accountId,
-    R2_ACCESS_KEY_ID: accessKeyId,
-    R2_SECRET_ACCESS_KEY: secretAccessKey,
-    R2_BUCKET: bucket,
-    R2_PUBLIC_URL: publicUrl,
-  } = process.env;
-
-  if (!accountId || !accessKeyId || !secretAccessKey || !bucket || !publicUrl) {
-    return null;
-  }
-
-  return {
-    accountId,
-    accessKeyId,
-    secretAccessKey,
-    bucket,
-    // sin barra final, para poder concatenar sin duplicarla
-    publicUrl: publicUrl.replace(/\/+$/, ''),
-  };
-}
-
-/** Nombra las variables que falten, para poder avisar con precision. */
-export function faltantesR2(): string[] {
-  return [
-    'R2_ACCOUNT_ID',
-    'R2_ACCESS_KEY_ID',
-    'R2_SECRET_ACCESS_KEY',
-    'R2_BUCKET',
-    'R2_PUBLIC_URL',
-  ].filter((k) => !process.env[k]);
+export function urlPublica(): string | null {
+  const base = process.env.R2_PUBLIC_URL;
+  return base ? base.replace(/\/+$/, '') : null;
 }
 
 /**
@@ -61,34 +32,24 @@ export function faltantesR2(): string[] {
  */
 export async function subirAR2(
   clave: string,
-  cuerpo: Uint8Array | ArrayBuffer,
+  cuerpo: ArrayBuffer,
   contentType: string,
-  config: ConfigR2,
 ): Promise<string> {
-  const cliente = new AwsClient({
-    accessKeyId: config.accessKeyId,
-    secretAccessKey: config.secretAccessKey,
-    service: 's3',
-    region: 'auto',
-  });
+  const base = urlPublica();
+  if (!base) {
+    throw new Error('Falta la variable R2_PUBLIC_URL');
+  }
 
-  const endpoint = `https://${config.accountId}.r2.cloudflarestorage.com/${config.bucket}/${clave}`;
+  const { env } = getCloudflareContext() as unknown as { env: { FOTOS: BucketR2 } };
 
-  const res = await cliente.fetch(endpoint, {
-    method: 'PUT',
-    body: cuerpo as BodyInit,
-    headers: {
-      'Content-Type': contentType,
+  await env.FOTOS.put(clave, cuerpo, {
+    httpMetadata: {
+      contentType,
       // Un ano de cache: el nombre lleva la fecha, asi que el contenido de una
       // URL nunca cambia.
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      cacheControl: 'public, max-age=31536000, immutable',
     },
   });
 
-  if (!res.ok) {
-    const detalle = await res.text().catch(() => '');
-    throw new Error(`R2 respondio ${res.status}: ${detalle.slice(0, 300)}`);
-  }
-
-  return `${config.publicUrl}/${clave}`;
+  return `${base}/${clave}`;
 }

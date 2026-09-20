@@ -1,7 +1,7 @@
 // Migra las fotos de Vercel Blob a Cloudflare R2.
 //
-// Que hace con cada imagen: la descarga, la comprime a WebP 1400px, la sube a
-// R2 y actualiza la URL en la base. Toca las tablas products y announcements.
+// Con cada imagen: la descarga, la comprime a WebP 1400px, la sube al bucket
+// y actualiza la URL en la base. Toca las tablas products y announcements.
 //
 // Uso:
 //   node scripts/migrar-fotos-a-r2.mjs --dry    ver que haria, sin tocar nada
@@ -9,19 +9,29 @@
 //
 // Se puede cortar y volver a correr: saltea las que ya estan en R2.
 //
-// Necesita en .env.local: DATABASE_URL y las cinco R2_*
+// No necesita tokens de API: sube con el CLI de wrangler, que ya esta
+// autenticado con tu cuenta de Cloudflare (npx wrangler login).
+//
+// Necesita en .env.local: DATABASE_URL y R2_PUBLIC_URL
 
 import { config } from 'dotenv';
 import { neon } from '@neondatabase/serverless';
-import { AwsClient } from 'aws4fetch';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { writeFile, unlink, mkdtemp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import sharp from 'sharp';
 
+const ejecutar = promisify(execFile);
 config({ path: '.env.local', quiet: true });
 
 const DRY = process.argv.includes('--dry');
 const MAX_LADO = 1400;
 const CALIDAD = 80;
-const EN_PARALELO = 4;
+// De a uno: cada subida levanta un proceso de wrangler y varios en paralelo
+// se pelean por la sesion.
+const BUCKET = 'luz-de-orion';
 
 const req = (k) => {
   const v = process.env[k];
@@ -29,19 +39,8 @@ const req = (k) => {
   return v;
 };
 
-const DATABASE_URL = req('DATABASE_URL');
-const ACCOUNT_ID = req('R2_ACCOUNT_ID');
-const BUCKET = req('R2_BUCKET');
+const sql = neon(req('DATABASE_URL'));
 const PUBLIC_URL = req('R2_PUBLIC_URL').replace(/\/+$/, '');
-
-const cliente = new AwsClient({
-  accessKeyId: req('R2_ACCESS_KEY_ID'),
-  secretAccessKey: req('R2_SECRET_ACCESS_KEY'),
-  service: 's3',
-  region: 'auto',
-});
-
-const sql = neon(DATABASE_URL);
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 
 function nombreDesdeUrl(url) {
@@ -56,24 +55,7 @@ function nombreDesdeUrl(url) {
   return `${slug || 'imagen'}.webp`;
 }
 
-async function subir(clave, cuerpo) {
-  const res = await cliente.fetch(
-    `https://${ACCOUNT_ID}.r2.cloudflarestorage.com/${BUCKET}/${clave}`,
-    {
-      method: 'PUT',
-      body: cuerpo,
-      headers: {
-        'Content-Type': 'image/webp',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    },
-  );
-  if (!res.ok) {
-    throw new Error(`R2 respondio ${res.status}: ${(await res.text().catch(() => '')).slice(0, 200)}`);
-  }
-}
-
-async function migrarUna(fila) {
+async function migrarUna(fila, carpeta) {
   const { tabla, id, imageUrl } = fila;
 
   const res = await fetch(imageUrl);
@@ -87,7 +69,7 @@ async function migrarUna(fila) {
 
   const original = Buffer.from(await res.arrayBuffer());
   const comprimida = await sharp(original, { failOn: 'none' })
-    .rotate()
+    .rotate() // aplica la orientacion EXIF: sin esto salen acostadas
     .resize({ width: MAX_LADO, height: MAX_LADO, fit: 'inside', withoutEnlargement: true })
     .webp({ quality: CALIDAD })
     .toBuffer();
@@ -96,7 +78,19 @@ async function migrarUna(fila) {
   const nueva = `${PUBLIC_URL}/${clave}`;
 
   if (!DRY) {
-    await subir(clave, comprimida);
+    const temporal = join(carpeta, `${tabla}-${id}.webp`);
+    await writeFile(temporal, comprimida);
+    try {
+      await ejecutar('npx', [
+        'wrangler', 'r2', 'object', 'put', `${BUCKET}/${clave}`,
+        '--file', temporal,
+        '--content-type', 'image/webp',
+        '--remote',
+      ], { maxBuffer: 10 * 1024 * 1024 });
+    } finally {
+      await unlink(temporal).catch(() => {});
+    }
+
     if (tabla === 'products') {
       await sql`UPDATE products SET image_url = ${nueva} WHERE id = ${id}`;
     } else {
@@ -104,7 +98,7 @@ async function migrarUna(fila) {
     }
   }
 
-  return { original: original.length, final: comprimida.length, nueva };
+  return { original: original.length, final: comprimida.length };
 }
 
 async function main() {
@@ -119,35 +113,34 @@ async function main() {
   ];
 
   const pendientes = todas.filter((f) => !f.imageUrl.startsWith(PUBLIC_URL));
-  const yaEstaban = todas.length - pendientes.length;
 
   console.log(`Imagenes en la base : ${todas.length}`);
-  console.log(`Ya estaban en R2    : ${yaEstaban}`);
+  console.log(`Ya estaban en R2    : ${todas.length - pendientes.length}`);
   console.log(`A migrar            : ${pendientes.length}\n`);
 
   if (pendientes.length === 0) { console.log('No hay nada que hacer.'); return; }
 
+  const carpeta = await mkdtemp(join(tmpdir(), 'ldo-migracion-'));
   let ok = 0, pesoAntes = 0, pesoDespues = 0;
   const errores = [];
-  const cola = [...pendientes];
 
-  const trabajador = async () => {
-    for (;;) {
-      const fila = cola.shift();
-      if (!fila) return;
-      const etiqueta = `${fila.tabla}#${fila.id}`;
-      try {
-        const r = await migrarUna(fila);
-        ok += 1; pesoAntes += r.original; pesoDespues += r.final;
-        console.log(`  ok  ${etiqueta.padEnd(20)} ${kb(r.original)} -> ${kb(r.final)}`);
-      } catch (e) {
-        errores.push({ etiqueta, motivo: e.message });
-        console.log(`  --  ${etiqueta.padEnd(20)} ${e.message}`);
+  for (const [i, fila] of pendientes.entries()) {
+    const etiqueta = `${fila.tabla}#${fila.id}`;
+    const avance = `[${i + 1}/${pendientes.length}]`;
+    try {
+      const r = await migrarUna(fila, carpeta);
+      ok += 1; pesoAntes += r.original; pesoDespues += r.final;
+      console.log(`  ${avance} ok  ${etiqueta.padEnd(18)} ${kb(r.original)} -> ${kb(r.final)}`);
+    } catch (e) {
+      errores.push({ etiqueta, motivo: e.message.split('\n')[0] });
+      console.log(`  ${avance} --  ${etiqueta.padEnd(18)} ${e.message.split('\n')[0]}`);
+      // Si el store sigue bloqueado no tiene sentido seguir con 147 mas.
+      if (e.message.includes('403')) {
+        console.log('\nCortado: hay que desbloquear el store de Vercel antes de migrar.');
+        break;
       }
     }
-  };
-
-  await Promise.all(Array.from({ length: EN_PARALELO }, trabajador));
+  }
 
   console.log(`\nMigradas: ${ok} de ${pendientes.length}`);
   if (ok > 0) {
