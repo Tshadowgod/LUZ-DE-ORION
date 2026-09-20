@@ -2,6 +2,11 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "luz-de-orion",
   "main": ".open-next/worker.js",
+  // Temporal: la cuenta todavia no registro su subdominio workers.dev y sin
+  // eso el deploy falla. Con esto el worker se publica igual, solo que sin
+  // URL publica. Cambiar a true (o borrar la linea) cuando el subdominio
+  // exista, o conectar el dominio propio con una ruta.
+  "workers_dev": false,
   "compatibility_date": "2026-09-20",
   // nodejs_compat: lo necesitan el driver de Neon y el adaptador de Next.
   "compatibility_flags": ["nodejs_compat"],
