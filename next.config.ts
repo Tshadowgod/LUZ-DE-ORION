@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const nextConfig: NextConfig = {
   images: {
@@ -6,12 +7,15 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '**' },
       { protocol: 'http', hostname: '**' },
     ],
-    // AVIF y WebP pesan mucho menos que el JPEG original en el celular.
-    formats: ['image/avif', 'image/webp'],
-    // El nombre de cada archivo lleva la fecha, asi que una URL nunca cambia de
-    // contenido: conviene cachear un año y no volver a optimizar la misma foto.
-    minimumCacheTTL: 31536000,
+    // En Cloudflare no corre el optimizador de imagenes de Next (eso lo daba
+    // Vercel gratis; aca seria Cloudflare Images, que es pago). No hace falta:
+    // las fotos ya se suben comprimidas a WebP 1400px desde el navegador, y
+    // Cloudflare las cachea en su CDN.
+    unoptimized: true,
   },
 };
 
 export default nextConfig;
+
+// Permite que `next dev` vea los bindings de Cloudflare (R2, variables, etc).
+initOpenNextCloudflareForDev();

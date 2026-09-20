@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { comprimirImagen } from '@/lib/comprimir-imagen';
 
 type Category = { id: number; name: string; slug: string; icon: string | null; color: string | null };
 type FormData = { name: string; description: string; price: string; stock: string; categoryId: string; imageUrl: string };
@@ -32,7 +33,9 @@ export default function ProductForm({ categories, initialData, productId, mode, 
     if (!file) return;
     setUploading(true); setError('');
     try {
-      const fd = new FormData(); fd.append('file', file);
+      // Se achica antes de mandarla: sube mucho mas rapido desde el celular.
+      const { archivo } = await comprimirImagen(file);
+      const fd = new FormData(); fd.append('file', archivo);
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Error al subir');

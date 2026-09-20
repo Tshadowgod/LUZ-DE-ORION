@@ -1,17 +1,18 @@
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs'; // sharp necesita Node, no Edge
 import { NextRequest, NextResponse } from 'next/server';
-import sharp from 'sharp';
 import { leerConfigR2, faltantesR2, subirAR2 } from '@/lib/r2';
 
-// Las fotos que llegan del celular o de ChatGPT pesan 2-5 MB y vienen a 4000px.
-// Para una tienda no sirve de nada: la tarjeta mas grande mide 1200px. Aca las
-// dejamos en WebP a 1400px como maximo, que baja el peso entre 10 y 20 veces.
-const MAX_LADO = 1400;
-const CALIDAD = 80;
+// Ojo: aca NO se comprime. En Cloudflare Workers no corre sharp (es un modulo
+// nativo y Workers no ejecuta binarios), asi que las fotos se achican en el
+// navegador antes de enviarlas. Ver src/lib/comprimir-imagen.ts.
+//
+// Sale mejor incluso: no se manda el archivo pesado por la red, y no gasta CPU
+// del servidor.
 
 const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
-const MAX_ENTRADA = 20 * 1024 * 1024; // el original puede ser pesado: lo comprimimos nosotros
+// Ya viene comprimida del navegador; el margen es por si la compresion fallo
+// y se mando el original.
+const MAX_ENTRADA = 12 * 1024 * 1024;
 
 // "WhatsApp Image 2026-09-15 at 12.12.31 PM.jpeg" -> "whatsapp-image-2026-09-15-at-12-12-31-pm"
 function nombreLimpio(nombre: string) {
@@ -49,43 +50,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (file.size > MAX_ENTRADA) {
-      return NextResponse.json({ error: 'El archivo excede 20MB' }, { status: 400 });
+      return NextResponse.json({ error: 'La imagen es demasiado pesada' }, { status: 400 });
     }
 
-    const original = Buffer.from(await file.arrayBuffer());
-    const esGif = file.type === 'image/gif';
-
-    let cuerpo: Buffer = original;
-    let contentType = file.type;
-    let extension = file.type === 'image/jpeg' ? 'jpg' : file.type.replace('image/', '');
-
-    try {
-      const img = sharp(original, { animated: esGif, failOn: 'none' });
-      // .rotate() sin argumentos aplica la orientacion EXIF: sin esto las fotos
-      // de celular salen acostadas. En los GIF animados se omite.
-      const procesada = esGif ? img : img.rotate();
-
-      cuerpo = await procesada
-        .resize({ width: MAX_LADO, height: MAX_LADO, fit: 'inside', withoutEnlargement: true })
-        .webp({ quality: CALIDAD })
-        .toBuffer();
-
-      contentType = 'image/webp';
-      extension = 'webp';
-    } catch (err) {
-      // Si sharp no puede con el archivo, subimos el original antes que dejar
-      // al admin sin poder cargar el producto.
-      console.error('No se pudo comprimir, se sube el original:', err);
-    }
-
+    const extension = file.type === 'image/jpeg' ? 'jpg' : file.type.replace('image/', '');
     const clave = `productos/${Date.now()}-${nombreLimpio(file.name)}.${extension}`;
-    const url = await subirAR2(clave, cuerpo, contentType, config);
+    const cuerpo = await file.arrayBuffer();
 
-    return NextResponse.json({
-      url,
-      bytesOriginal: original.length,
-      bytesFinal: cuerpo.length,
-    });
+    const url = await subirAR2(clave, cuerpo, file.type, config);
+
+    return NextResponse.json({ url, bytes: file.size });
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json({ error: 'Error al subir imagen' }, { status: 500 });
