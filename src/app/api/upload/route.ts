@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs'; // sharp necesita Node, no Edge
 import { NextRequest, NextResponse } from 'next/server';
-import { put } from '@vercel/blob';
 import sharp from 'sharp';
+import { leerConfigR2, faltantesR2, subirAR2 } from '@/lib/r2';
 
 // Las fotos que llegan del celular o de ChatGPT pesan 2-5 MB y vienen a 4000px.
 // Para una tienda no sirve de nada: la tarjeta mas grande mide 1200px. Aca las
@@ -27,6 +27,16 @@ function nombreLimpio(nombre: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const config = leerConfigR2();
+    if (!config) {
+      const faltan = faltantesR2().join(', ');
+      console.error('R2 sin configurar. Faltan:', faltan);
+      return NextResponse.json(
+        { error: `Almacenamiento sin configurar (faltan: ${faltan})` },
+        { status: 500 },
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -68,13 +78,11 @@ export async function POST(request: NextRequest) {
       console.error('No se pudo comprimir, se sube el original:', err);
     }
 
-    const blob = await put(`productos/${Date.now()}-${nombreLimpio(file.name)}.${extension}`, cuerpo, {
-      access: 'public',
-      contentType,
-    });
+    const clave = `productos/${Date.now()}-${nombreLimpio(file.name)}.${extension}`;
+    const url = await subirAR2(clave, cuerpo, contentType, config);
 
     return NextResponse.json({
-      url: blob.url,
+      url,
       bytesOriginal: original.length,
       bytesFinal: cuerpo.length,
     });
