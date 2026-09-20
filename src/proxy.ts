@@ -4,13 +4,11 @@ import { jwtVerify } from 'jose';
 const getSecret = () =>
   new TextEncoder().encode(process.env.JWT_SECRET ?? 'ldo-fallback-secret-change-me');
 
-// Modo mantenimiento. Queda PRENDIDO por defecto mientras se resuelve lo de las
-// fotos bloqueadas en Vercel Blob: sin esto habria que acordarse de crear la
-// variable en Vercel, y la tienda se publicaria abierta pero sin imagenes.
+// Modo mantenimiento, apagado por defecto: la tienda esta abierta.
 //
-// Para reabrir la tienda: poner MANTENIMIENTO=0 en las variables de entorno
-// (Vercel > Settings > Environment Variables). No hace falta tocar el codigo.
-const enMantenimiento = !['0', 'false', 'no'].includes(
+// Para pausarla: poner MANTENIMIENTO=1 en las variables de entorno del worker
+// y volver a desplegar.
+const enMantenimiento = ['1', 'true', 'si'].includes(
   (process.env.MANTENIMIENTO ?? '').toLowerCase(),
 );
 
