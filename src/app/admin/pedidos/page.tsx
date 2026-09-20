@@ -147,7 +147,7 @@ export default function PedidosPage() {
                           aria-label={`Ver imagen de ${item.name}`}
                           className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center cursor-zoom-in active:scale-95 transition-transform">
                           <Image src={item.imageUrl} alt={item.name} width={40} height={40}
-                            className="w-full h-full object-cover" unoptimized />
+                            className="w-full h-full object-cover" />
                         </button>
                       ) : (
                         <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
@@ -206,8 +206,8 @@ export default function PedidosPage() {
               </button>
             </div>
             <div className="rounded-[1.5rem] overflow-hidden bg-primary-container/20">
-              <Image src={preview.url} alt={preview.name} width={800} height={800}
-                className="w-full h-auto max-h-[70vh] object-contain" unoptimized />
+              <Image src={preview.url} alt={preview.name} width={800} height={800} sizes="(max-width: 768px) 92vw, 768px"
+                className="w-full h-auto max-h-[70vh] object-contain" />
             </div>
           </div>
         </div>

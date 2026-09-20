@@ -95,7 +95,7 @@ export default function CartSidebar() {
                 <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                   {item.imageUrl ? (
                     <Image src={item.imageUrl} alt={item.name} width={56} height={56}
-                      className="w-full h-full object-cover" unoptimized />
+                      className="w-full h-full object-cover" />
                   ) : (
                     <span className="text-2xl">{item.categoryIcon ?? '💍'}</span>
                   )}

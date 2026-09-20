@@ -81,7 +81,7 @@ export default function ImageLightbox({ src, alt }: { src: string; alt: string }
       <div className="relative h-56 sm:h-80 overflow-hidden cursor-zoom-in" onClick={() => setOpen(true)}
         role="button" aria-label={`Ampliar foto de ${alt}`} tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(true); } }}>
-        <Image src={src} alt={alt} fill className="object-cover" unoptimized />
+        <Image src={src} alt={alt} fill sizes="(max-width: 640px) 100vw, 640px" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent pointer-events-none" />
         <span className="absolute bottom-3 right-3 liquid-glass-dark rounded-full p-2 text-primary pointer-events-none">
           <span className="material-symbols-outlined text-xl block" style={{ fontVariationSettings: "'wght' 200, 'opsz' 24" }}>
@@ -111,7 +111,7 @@ export default function ImageLightbox({ src, alt }: { src: string; alt: string }
                 transform: `translate(${t.x}px, ${t.y}px) scale(${t.scale})`,
                 transition: dragging ? 'none' : 'transform 0.25s var(--ease-fluid)',
               }}>
-              <Image src={src} alt={alt} fill className="object-contain pointer-events-none" unoptimized priority />
+              <Image src={src} alt={alt} fill sizes="(max-width: 1280px) 100vw, 1280px" className="object-contain pointer-events-none" priority />
             </div>
           </div>
 

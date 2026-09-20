@@ -44,7 +44,7 @@ export default async function AdminAnunciosPage() {
                 <div className="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
                   {item.imageUrl
                     ? <Image src={item.imageUrl} alt={item.title} width={80} height={80}
-                        className="w-full h-full object-cover" unoptimized />
+                        className="w-full h-full object-cover" />
                     : <span className="text-2xl">🔔</span>
                   }
                 </div>

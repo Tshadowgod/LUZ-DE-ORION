@@ -86,7 +86,7 @@ export default async function PublicHomePage() {
                 <div className="h-44 bg-primary-container/20 flex items-center justify-center relative overflow-hidden">
                   {p.imageUrl
                     ? <Image src={p.imageUrl} alt={p.name} fill sizes="176px"
-                        className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out" unoptimized />
+                        className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out" />
                     : <span className="text-4xl opacity-50">{p.categoryIcon ?? '💍'}</span>
                   }
                 </div>

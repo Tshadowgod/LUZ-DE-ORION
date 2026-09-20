@@ -42,7 +42,7 @@ export default function Carousel({ items }: { items: Announcement[] }) {
           {slide.imageUrl ? (
             <Image src={slide.imageUrl} alt={slide.title} fill priority={i === 0}
               sizes="(max-width: 768px) 100vw, 768px"
-              className={`object-cover ${i === current ? 'animate-ken-burns' : ''}`} unoptimized />
+              className={`object-cover ${i === current ? 'animate-ken-burns' : ''}`} />
           ) : (
             <div className="w-full h-full"
               style={{ background: 'linear-gradient(135deg, rgba(244,215,211,0.5) 0%, rgba(255,224,136,0.4) 100%)' }} />

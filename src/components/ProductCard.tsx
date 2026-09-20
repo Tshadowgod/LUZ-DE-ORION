@@ -32,9 +32,9 @@ export default function ProductCard({ product, mode = 'public', onDelete, onAddT
     <div className="flex-shrink-0 w-full liquid-glass glass-card glossy-reflection rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden group">
       <div className="h-36 sm:h-56 lg:h-64 overflow-hidden relative">
         {product.imageUrl && !imgError ? (
-          <Image src={product.imageUrl} alt={product.name} fill
+          <Image src={product.imageUrl} alt={product.name} fill sizes="(max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-110 transition-transform duration-[1200ms] ease-out"
-            onError={() => setImgError(true)} unoptimized />
+            onError={() => setImgError(true)} />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-primary-container/30">
             <span className="text-4xl sm:text-6xl opacity-60">{product.category?.icon ?? '💍'}</span>

@@ -57,8 +57,8 @@ export default function PopupAnnouncement() {
         {item.imageUrl && !imgError && (
           // Imagen completa (sin recortar): se muestra tal cual la subiste
           <div className="w-full bg-primary-container/20 rounded-t-[2rem] overflow-hidden flex items-center justify-center">
-            <Image src={item.imageUrl} alt={item.title} width={800} height={800}
-              className="w-full h-auto max-h-[55vh] object-contain" unoptimized onError={() => setImgError(true)} />
+            <Image src={item.imageUrl} alt={item.title} width={800} height={800} sizes="(max-width: 640px) 92vw, 600px"
+              className="w-full h-auto max-h-[55vh] object-contain" onError={() => setImgError(true)} />
           </div>
         )}
 

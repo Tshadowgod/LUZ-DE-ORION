@@ -142,7 +142,7 @@ export default function InventarioPage() {
                       aria-label={`Ver imagen de ${item.name}`}
                       className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-primary-container/20 flex items-center justify-center cursor-zoom-in active:scale-95 transition-transform">
                       <Image src={item.imageUrl} alt={item.name} width={48} height={48}
-                        className="w-full h-full object-cover" unoptimized />
+                        className="w-full h-full object-cover" />
                     </button>
                   ) : (
                     <div className="w-12 h-12 rounded-xl flex-shrink-0 bg-primary-container/20 flex items-center justify-center">
@@ -215,8 +215,8 @@ export default function InventarioPage() {
               </button>
             </div>
             <div className="rounded-[1.5rem] overflow-hidden bg-primary-container/20">
-              <Image src={preview.url} alt={preview.name} width={800} height={800}
-                className="w-full h-auto max-h-[70vh] object-contain" unoptimized />
+              <Image src={preview.url} alt={preview.name} width={800} height={800} sizes="(max-width: 768px) 92vw, 768px"
+                className="w-full h-auto max-h-[70vh] object-contain" />
             </div>
           </div>
         </div>
