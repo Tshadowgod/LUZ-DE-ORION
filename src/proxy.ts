@@ -14,9 +14,11 @@ const enMantenimiento = !['0', 'false', 'no'].includes(
   (process.env.MANTENIMIENTO ?? '').toLowerCase(),
 );
 
-// El panel, el login y las APIs siguen abiertos aunque la tienda este pausada:
-// asi podés seguir cargando productos mientras los clientes ven el aviso.
-const RUTAS_SIEMPRE_ABIERTAS = ['/admin', '/login', '/api', '/mantenimiento'];
+// El panel, el login, las APIs y las fotos siguen abiertos aunque la tienda
+// este pausada: asi podés seguir cargando productos mientras los clientes ven
+// el aviso. /fotos tiene que quedar fuera o las imagenes devolverian el HTML
+// del aviso en lugar del archivo.
+const RUTAS_SIEMPRE_ABIERTAS = ['/admin', '/login', '/api', '/fotos', '/mantenimiento'];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

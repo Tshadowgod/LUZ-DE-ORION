@@ -9,12 +9,14 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  // El bucket queda conectado directo al worker: no hacen falta claves de API
-  // ni secretos. Si le pusiste otro nombre al bucket, cambialo aca.
-  "r2_buckets": [
+  // Las fotos van en Workers KV, que entra en el plan gratis y no pide
+  // tarjeta. R2 seria lo ideal para archivos, pero exige medio de pago.
+  // Para el tamano de esta tienda (148 fotos, ~33 MB) KV sobra: el limite
+  // gratis es 1 GB.
+  "kv_namespaces": [
     {
       "binding": "FOTOS",
-      "bucket_name": "luz-de-orion"
+      "id": "637a6848a0e84a5daa36c9019c3d6f7a"
     }
   ],
   "observability": {

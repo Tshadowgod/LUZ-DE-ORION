@@ -1,10 +1,12 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { urlPublica, subirAR2 } from '@/lib/r2';
+import { guardarFoto } from '@/lib/fotos';
 
 // Ojo: aca NO se comprime. En Cloudflare Workers no corre sharp (es un modulo
 // nativo y Workers no ejecuta binarios), asi que las fotos se achican en el
 // navegador antes de enviarlas. Ver src/lib/comprimir-imagen.ts.
+//
+// Se guardan en KV y se sirven desde /fotos/... (ver src/lib/fotos.ts).
 //
 // Sale mejor incluso: no se manda el archivo pesado por la red, y no gasta CPU
 // del servidor.
@@ -28,14 +30,6 @@ function nombreLimpio(nombre: string) {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!urlPublica()) {
-      console.error('Falta la variable R2_PUBLIC_URL');
-      return NextResponse.json(
-        { error: 'Almacenamiento sin configurar (falta R2_PUBLIC_URL)' },
-        { status: 500 },
-      );
-    }
-
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -55,7 +49,7 @@ export async function POST(request: NextRequest) {
     const clave = `productos/${Date.now()}-${nombreLimpio(file.name)}.${extension}`;
     const cuerpo = await file.arrayBuffer();
 
-    const url = await subirAR2(clave, cuerpo, file.type);
+    const url = await guardarFoto(clave, cuerpo, file.type);
 
     return NextResponse.json({ url, bytes: file.size });
   } catch (error) {

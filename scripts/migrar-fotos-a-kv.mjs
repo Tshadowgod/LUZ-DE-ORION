@@ -1,18 +1,21 @@
-// Migra las fotos de Vercel Blob a Cloudflare R2.
+// Migra las fotos de Vercel Blob a Cloudflare Workers KV.
 //
-// Con cada imagen: la descarga, la comprime a WebP 1400px, la sube al bucket
-// y actualiza la URL en la base. Toca las tablas products y announcements.
+// Con cada imagen: la descarga, la comprime a WebP 1400px, la guarda en KV y
+// actualiza la URL en la base. Toca las tablas products y announcements.
+//
+// Las URLs quedan relativas (/fotos/...), asi siguen funcionando aunque la
+// tienda cambie de dominio.
 //
 // Uso:
-//   node scripts/migrar-fotos-a-r2.mjs --dry    ver que haria, sin tocar nada
-//   node scripts/migrar-fotos-a-r2.mjs          hacerlo de verdad
+//   node scripts/migrar-fotos-a-kv.mjs --dry    ver que haria, sin tocar nada
+//   node scripts/migrar-fotos-a-kv.mjs          hacerlo de verdad
 //
-// Se puede cortar y volver a correr: saltea las que ya estan en R2.
+// Se puede cortar y volver a correr: saltea las que ya estan migradas.
 //
-// No necesita tokens de API: sube con el CLI de wrangler, que ya esta
+// No necesita tokens de API: escribe con el CLI de wrangler, que ya esta
 // autenticado con tu cuenta de Cloudflare (npx wrangler login).
 //
-// Necesita en .env.local: DATABASE_URL y R2_PUBLIC_URL
+// Necesita en .env.local: DATABASE_URL
 
 import { config } from 'dotenv';
 import { neon } from '@neondatabase/serverless';
@@ -29,9 +32,9 @@ config({ path: '.env.local', quiet: true });
 const DRY = process.argv.includes('--dry');
 const MAX_LADO = 1400;
 const CALIDAD = 80;
-// De a uno: cada subida levanta un proceso de wrangler y varios en paralelo
-// se pelean por la sesion.
-const BUCKET = 'luz-de-orion';
+// De a uno: cada escritura levanta un proceso de wrangler y varios en
+// paralelo se pelean por la sesion.
+const NAMESPACE_ID = '637a6848a0e84a5daa36c9019c3d6f7a';
 
 const req = (k) => {
   const v = process.env[k];
@@ -40,7 +43,7 @@ const req = (k) => {
 };
 
 const sql = neon(req('DATABASE_URL'));
-const PUBLIC_URL = req('R2_PUBLIC_URL').replace(/\/+$/, '');
+const PREFIJO = '/fotos/';
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 
 function nombreDesdeUrl(url) {
@@ -75,16 +78,17 @@ async function migrarUna(fila, carpeta) {
     .toBuffer();
 
   const clave = `productos/${id}-${nombreDesdeUrl(imageUrl)}`;
-  const nueva = `${PUBLIC_URL}/${clave}`;
+  const nueva = `${PREFIJO}${clave}`;
 
   if (!DRY) {
     const temporal = join(carpeta, `${tabla}-${id}.webp`);
     await writeFile(temporal, comprimida);
     try {
       await ejecutar('npx', [
-        'wrangler', 'r2', 'object', 'put', `${BUCKET}/${clave}`,
-        '--file', temporal,
-        '--content-type', 'image/webp',
+        'wrangler', 'kv', 'key', 'put', clave,
+        '--path', temporal,
+        '--namespace-id', NAMESPACE_ID,
+        '--metadata', JSON.stringify({ contentType: 'image/webp' }),
         '--remote',
       ], { maxBuffer: 10 * 1024 * 1024 });
     } finally {
@@ -112,10 +116,10 @@ async function main() {
     ...anuncios.map((r) => ({ tabla: 'announcements', id: r.id, imageUrl: r.image_url })),
   ];
 
-  const pendientes = todas.filter((f) => !f.imageUrl.startsWith(PUBLIC_URL));
+  const pendientes = todas.filter((f) => !f.imageUrl.startsWith(PREFIJO));
 
   console.log(`Imagenes en la base : ${todas.length}`);
-  console.log(`Ya estaban en R2    : ${todas.length - pendientes.length}`);
+  console.log(`Ya migradas         : ${todas.length - pendientes.length}`);
   console.log(`A migrar            : ${pendientes.length}\n`);
 
   if (pendientes.length === 0) { console.log('No hay nada que hacer.'); return; }
