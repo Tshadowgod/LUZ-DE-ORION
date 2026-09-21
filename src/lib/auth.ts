@@ -1,7 +1,13 @@
 import { SignJWT, jwtVerify } from 'jose';
 
-const getSecret = () =>
-  new TextEncoder().encode(process.env.JWT_SECRET ?? 'ldo-fallback-secret-change-me');
+// Sin valor de respaldo a proposito: el que habia estaba escrito en el codigo
+// y el repositorio es publico, asi que cualquiera podia firmar una cookie de
+// admin valida. Si falta JWT_SECRET preferimos que no entre nadie.
+const getSecret = () => {
+  const clave = process.env.JWT_SECRET;
+  if (!clave) throw new Error('Falta la variable JWT_SECRET');
+  return new TextEncoder().encode(clave);
+};
 
 export const COOKIE_NAME = 'ldo_admin';
 

@@ -1,8 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const getSecret = () =>
-  new TextEncoder().encode(process.env.JWT_SECRET ?? 'ldo-fallback-secret-change-me');
+// Ver el comentario en src/lib/auth.ts: sin valor de respaldo.
+const getSecret = () => {
+  const clave = process.env.JWT_SECRET;
+  if (!clave) throw new Error('Falta la variable JWT_SECRET');
+  return new TextEncoder().encode(clave);
+};
+
+/** Devuelve false ante cualquier problema: sin JWT_SECRET no entra nadie. */
+async function sesionValida(token: string | undefined): Promise<boolean> {
+  if (!token) return false;
+  try {
+    await jwtVerify(token, getSecret());
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 // Modo mantenimiento, apagado por defecto: la tienda esta abierta.
 //
@@ -22,10 +37,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
-    const token = request.cookies.get('ldo_admin')?.value;
-    const isValid = token
-      ? await jwtVerify(token, getSecret()).then(() => true).catch(() => false)
-      : false;
+    const isValid = await sesionValida(request.cookies.get('ldo_admin')?.value);
 
     if (!isValid) {
       return NextResponse.redirect(new URL('/login', request.url));
