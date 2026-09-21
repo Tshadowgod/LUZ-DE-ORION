@@ -40,10 +40,18 @@ export async function proxy(request: NextRequest) {
     const isValid = await sesionValida(request.cookies.get('ldo_admin')?.value);
 
     if (!isValid) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      // rewrite y no redirect: se muestra el formulario sin que la barra de
+      // direcciones cambie a /login. Para quien entra, el panel es /admin y
+      // punto.
+      return NextResponse.rewrite(new URL('/login', request.url));
     }
 
     return NextResponse.next();
+  }
+
+  // Nadie deberia llegar a /login directamente: el panel es /admin.
+  if (pathname === '/login') {
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   if (enMantenimiento && !RUTAS_SIEMPRE_ABIERTAS.some((r) => pathname.startsWith(r))) {
