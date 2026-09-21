@@ -48,3 +48,6 @@ next-env.d.ts
 .dev.vars
 .wrangler/
 worker-configuration.d.ts
+
+# Este si se versiona: solo tiene valores publicos
+!.env.production
