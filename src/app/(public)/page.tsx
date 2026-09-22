@@ -7,6 +7,13 @@ import { products, categories, announcements } from '@/lib/schema';
 import { and, eq, desc } from 'drizzle-orm';
 import Carousel from '@/components/Carousel';
 
+// Colecciones con ilustración propia en public/colecciones/<slug>.webp;
+// las demás siguen mostrando su emoji.
+const ICONOS_COLECCION = new Set([
+  'anillos', 'aritos', 'collares', 'desinfectantes', 'empaques', 'joyeros',
+  'labiales', 'llaveros', 'otros-productos', 'pulseras', 'relojes-2',
+]);
+
 export default async function PublicHomePage() {
   let notices: { id: number; title: string; description: string | null; imageUrl: string | null }[] = [];
   let featured: { id: number; name: string; price: string | null; imageUrl: string | null; categoryIcon: string | null; categoryName: string | null }[] = [];
@@ -59,7 +66,10 @@ export default async function PublicHomePage() {
             {cats.map((cat, i) => (
               <Link key={cat.slug} href={`/productos?categoria=${cat.slug}`}
                 className={`liquid-glass glass-card glossy-reflection rounded-[2rem] p-5 flex flex-col animate-fade-up stagger-${Math.min(i + 2, 6)} ${i === 0 ? 'col-span-2 flex-row items-center gap-4' : ''}`}>
-                <span className={`text-4xl ${i === 0 ? '' : 'mb-2 block'}`}>{cat.icon}</span>
+                {ICONOS_COLECCION.has(cat.slug)
+                  ? <Image src={`/colecciones/${cat.slug}.webp`} alt="" width={56} height={56}
+                      className={`w-14 h-14 object-contain ${i === 0 ? '' : 'mb-2'}`} />
+                  : <span className={`text-4xl ${i === 0 ? '' : 'mb-2 block'}`}>{cat.icon}</span>}
                 <div>
                   <p className="text-[10px] font-bold tracking-[0.15em] text-tertiary font-sans uppercase">{cat.name}</p>
                   {i === 0 && <p className="font-display text-lg font-semibold text-on-background mt-0.5">Ver colección</p>}
