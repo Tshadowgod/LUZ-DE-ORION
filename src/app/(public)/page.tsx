@@ -42,7 +42,7 @@ export default async function PublicHomePage() {
           BIENVENIDA
         </p>
         <h2 className="font-display text-3xl font-semibold text-on-background leading-tight">
-          Joyería artesanal para ti. ✨
+          Joyería especialmente para ti. ✨
         </h2>
       </section>
 
