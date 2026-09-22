@@ -56,7 +56,7 @@ export default async function PublicHomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {cats.slice(0, 4).map((cat, i) => (
+            {cats.map((cat, i) => (
               <Link key={cat.slug} href={`/productos?categoria=${cat.slug}`}
                 className={`liquid-glass glass-card glossy-reflection rounded-[2rem] p-5 flex flex-col animate-fade-up stagger-${Math.min(i + 2, 6)} ${i === 0 ? 'col-span-2 flex-row items-center gap-4' : ''}`}>
                 <span className={`text-4xl ${i === 0 ? '' : 'mb-2 block'}`}>{cat.icon}</span>
