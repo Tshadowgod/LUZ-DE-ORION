@@ -102,7 +102,7 @@ export default function AnnouncementForm({
         <label className={labelClass}>Imagen</label>
         <div className="flex gap-4 items-start">
           <div className="flex-1 space-y-2">
-            <input type="url" name="imageUrl" value={form.imageUrl} onChange={handleChange}
+            <input type="text" name="imageUrl" value={form.imageUrl} onChange={handleChange}
               placeholder="https://… (URL de imagen)" className={inputClass} />
             <div className="flex items-center gap-3">
               <span className="text-xs text-on-surface-variant/40 font-sans">o</span>
