@@ -1,0 +1,48 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Worker aparte de la tienda: el asistente personal.
+  "name": "luz-asistente",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-20",
+  "compatibility_flags": ["nodejs_compat"],
+  // Queda en https://luz-asistente.<tu-subdominio>.workers.dev
+  "workers_dev": true,
+
+  // Base de datos de tareas. Plan gratis, sin tarjeta.
+  // Crear con: npx wrangler d1 create asistente  (y pegar acá el id)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "asistente",
+      "database_id": "PEGAR_ACA_EL_ID_DE_D1"
+    }
+  ],
+
+  // Workers AI: transcribe los audios (Whisper) y entiende los mensajes.
+  // Gratis hasta 10.000 "neuronas" por día (alcanza para ~80 mensajes).
+  "ai": { "binding": "AI" },
+
+  // Cada minuto revisa si hay algo que avisar.
+  "triggers": { "crons": ["* * * * *"] },
+
+  "vars": {
+    // Zona horaria en la que hablas ("mañana a las 3" se entiende en esta zona).
+    "ZONA_HORARIA": "America/La_Paz",
+    // Hora local del resumen del día. Vacío = sin resumen.
+    "HORA_RESUMEN": "07:00",
+    // Minutos de aviso previo cuando no dices cuánto antes.
+    "AVISO_PREVIO_MIN": "30",
+    // Quién puede usar el bot, separado por comas: tg:<id>,wa:<numero>.
+    // Escríbele al bot y te responde con tu id para que lo pegues acá.
+    "USUARIOS_PERMITIDOS": "",
+    // WhatsApp (opcional): número y plantilla aprobada para avisos.
+    "WHATSAPP_PHONE_NUMBER_ID": "",
+    "WHATSAPP_PLANTILLA": "",
+    "WHATSAPP_PLANTILLA_IDIOMA": "es",
+    "WHATSAPP_API_VERSION": "v23.0",
+    // Modelo de Claude (solo si cargas ANTHROPIC_API_KEY).
+    "CLAUDE_MODELO": "claude-opus-5-5"
+  },
+
+  "observability": { "enabled": true }
+}
