@@ -2,8 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "luz-de-orion",
   "main": ".open-next/worker.js",
-  // La tienda vive en su dominio propio, no en workers.dev.
-  "workers_dev": false,
+  // La tienda vive en luzdeorion.store. La URL de workers.dev queda activa
+  // como respaldo: sirvio cuando Namecheap suspendio el dominio por la
+  // verificacion de correo de la ICANN y la tienda quedo inalcanzable.
+  "workers_dev": true,
   "routes": [
     { "pattern": "luzdeorion.store", "custom_domain": true },
     { "pattern": "www.luzdeorion.store", "custom_domain": true }
