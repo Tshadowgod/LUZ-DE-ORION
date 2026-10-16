@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // El asistente es un Worker aparte, con su propio package.json.
+    "asistente/**",
   ]),
 ]);
 

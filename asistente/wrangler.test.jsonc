@@ -1,0 +1,10 @@
+// Solo para los tests (npm test): D1 local, sin Workers AI ni cron.
+{
+  "name": "luz-asistente-test",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "asistente", "database_id": "00000000-0000-0000-0000-000000000000" }
+  ]
+}

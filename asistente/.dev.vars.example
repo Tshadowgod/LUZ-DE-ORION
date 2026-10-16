@@ -1,0 +1,14 @@
+# Copiar a .dev.vars para probar en local (wrangler dev).
+# En producción se cargan con: npx wrangler secret put NOMBRE
+
+TELEGRAM_BOT_TOKEN=123456:ABC...
+# Cualquier texto largo y aleatorio (letras, números, _ y -).
+TELEGRAM_SECRETO=cambia-esto-por-algo-largo
+
+# Opcional: WhatsApp Cloud API (Meta)
+WHATSAPP_TOKEN=
+WHATSAPP_APP_SECRET=
+WHATSAPP_VERIFY_TOKEN=
+
+# Opcional: usar Claude en vez de Llama para entender los mensajes.
+ANTHROPIC_API_KEY=

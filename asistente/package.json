@@ -1,0 +1,23 @@
+{
+  "name": "luz-asistente",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:crear": "wrangler d1 execute asistente --remote --file=schema.sql",
+    "db:local": "wrangler d1 execute asistente --local --file=schema.sql",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261001.1",
+    "typescript": "^5",
+    "vitest": "^3",
+    "wrangler": "^4.147.0"
+  }
+}
